@@ -1,7 +1,7 @@
 'use strict';
-import {Model} from 'sequelize';
+import { Model } from 'sequelize';
 
-interface UserAttributes {
+export interface UserAttributes {
   id: number,
   displayName: string,
   email: string,
@@ -12,8 +12,8 @@ interface UserAttributes {
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
-  class User extends Model<UserAttributes> 
-  implements UserAttributes {
+  class User extends Model<UserAttributes>
+    implements UserAttributes {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -33,12 +33,12 @@ module.exports = (sequelize: any, DataTypes: any) => {
   }
   User.init({
     id: {
-      type: DataTypes.NUMBER,
+      type: DataTypes.INTEGER,
       allowNull: false,
+      primaryKey: true,
       autoIncrement: true,
-      primaryKey: true
     },
-    displayName:{
+    displayName: {
       type: DataTypes.STRING,
       allowNull: false
     },
