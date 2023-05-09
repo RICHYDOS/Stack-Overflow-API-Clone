@@ -26,9 +26,17 @@ module.exports = (sequelize: any, DataTypes: any) => {
     location?: string;
     title?: string;
     aboutMe?: string;
+
+    // Timestamps
+    readonly createdAt!: Date;
+    readonly updatedAt!: Date;
+
     static associate(models: any) {
       // define association here
-      User.hasMany(models.Question)
+      User.hasMany(models.Question);
+      User.hasMany(models.Answer);
+      User.hasMany(models.Q_comments);
+      User.hasMany(models.A_comments);
     }
   }
   User.init({

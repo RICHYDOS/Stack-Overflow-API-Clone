@@ -9,7 +9,7 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-db.sequelize.sync().then(() => {
+db.sequelize.sync({force: true}).then(() => {
     console.log("Connected to the Database");
 });
 

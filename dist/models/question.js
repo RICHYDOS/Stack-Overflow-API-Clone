@@ -5,6 +5,8 @@ module.exports = (sequelize, DataTypes) => {
     class Question extends sequelize_1.Model {
         static associate(models) {
             Question.belongsTo(models.User);
+            Question.hasMany(models.Answer);
+            Question.hasMany(models.Q_comments);
         }
     }
     Question.init({
@@ -31,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
         },
         votes: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0
         },

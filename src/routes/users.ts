@@ -56,7 +56,7 @@ router.post("/login", errorHandler(async (req: Request, res: Response) => {
         throw new Error("All Fields are Mandatory");
     }
 
-    let user: any = await db.User.findOne({ where: { email } });
+    let user = await db.User.findOne({ where: { email } });
 
     // Compare client password with db password
     if (user && (await bcrypt.compare(password, user.dataValues.password))) {
@@ -76,7 +76,7 @@ router.post("/login", errorHandler(async (req: Request, res: Response) => {
             { expiresIn: "4h" }
         );
 
-        res.status(200).send({ access_token: accessToken });
+        return res.status(200).send({ access_token: accessToken });
     }
     else {
         res.status(401);

@@ -68,7 +68,7 @@ router.post("/login", (0, errorHandler_1.errorHandler)((req, res) => __awaiter(v
                 id: user.id
             },
         }, process.env.ACCESSTOKENSECRET, { expiresIn: "4h" });
-        res.status(200).send({ access_token: accessToken });
+        return res.status(200).send({ access_token: accessToken });
     }
     else {
         res.status(401);

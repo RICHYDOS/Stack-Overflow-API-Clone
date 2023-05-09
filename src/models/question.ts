@@ -28,9 +28,15 @@ module.exports = (sequelize: any, DataTypes:any) => {
     votes!: string;
     answers!: string
 
+    // Timestamps
+    readonly createdAt!: Date;
+    readonly updatedAt!: Date;
+
     static associate(models: any) {
       // define association here
       Question.belongsTo(models.User);
+      Question.hasMany(models.Answer);
+      Question.hasMany(models.Q_comments);
     }
   }
   Question.init({
@@ -57,7 +63,7 @@ module.exports = (sequelize: any, DataTypes:any) => {
       allowNull: true,
     },
     votes: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
     },
