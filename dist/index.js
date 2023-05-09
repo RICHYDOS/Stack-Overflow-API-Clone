@@ -11,7 +11,7 @@ const errorHandler_1 = require("./utils/errorHandler");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 5000;
-index_1.default.sequelize.sync({ force: true }).then(() => {
+index_1.default.sequelize.sync({}).then(() => {
     console.log("Connected to the Database");
 });
 app.use(express_1.default.json());

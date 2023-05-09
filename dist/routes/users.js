@@ -41,6 +41,7 @@ router.post("/register", (0, errorHandler_1.errorHandler)((req, res) => __awaite
             email,
             password: hashedPassword
         });
+        console.log(user.id);
         if (user) {
             const result = { user_id: user.id, user_email: user.email };
             return res.status(201).send(result);
@@ -58,17 +59,21 @@ router.post("/login", (0, errorHandler_1.errorHandler)((req, res) => __awaiter(v
         res.status(400);
         throw new Error("All Fields are Mandatory");
     }
-    let user = yield models_1.default.User.findOne({ where: { email } });
-    if (user && (yield bcrypt_1.default.compare(password, user.dataValues.password))) {
-        user = user.dataValues;
-        const accessToken = jsonwebtoken_1.default.sign({
-            user: {
-                username: user.username,
-                email: user.email,
-                id: user.id
-            },
-        }, process.env.ACCESSTOKENSECRET, { expiresIn: "4h" });
-        return res.status(200).send({ access_token: accessToken });
+    let user;
+    user = yield models_1.default.User.findOne({ where: { email } });
+    if (user !== null) {
+        let hashedPassword = user.password;
+        if (user && (yield bcrypt_1.default.compare(password, hashedPassword))) {
+            const accessToken = jsonwebtoken_1.default.sign({
+                user: {
+                    username: user.displayName,
+                    email: user.email,
+                    id: user.id
+                },
+            }, process.env.ACCESSTOKENSECRET, { expiresIn: "4h" });
+            return res.status(200).send({ access_token: accessToken });
+        }
+        return res.send("something went wrong");
     }
     else {
         res.status(401);
