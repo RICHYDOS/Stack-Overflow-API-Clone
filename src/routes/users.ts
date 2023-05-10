@@ -4,13 +4,13 @@ import db from "../models";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
 import { Request, Response } from "express";
-import { errorHandler } from "../utils/errorHandler";
+import tryCatch from "../utils/tryCatch";
 import { UserAttributes } from "../models/user";
 
 dotenv.config();
 const router = express.Router();
 
-router.post("/register", errorHandler(async (req: Request, res: Response) => {
+router.post("/register", tryCatch(async (req: Request, res: Response) => {
     const displayName: string = req.body.displayName;
     const email: string = req.body.email;
     const password: string = req.body.password;
@@ -23,7 +23,6 @@ router.post("/register", errorHandler(async (req: Request, res: Response) => {
     let user: UserAttributes;
 
     user = await db.User.findOne({ where: { email } });
-    console.log(user);
 
     if (user !== null) {
         return res.send("User already Exists... Login Please");
@@ -36,7 +35,7 @@ router.post("/register", errorHandler(async (req: Request, res: Response) => {
             password: hashedPassword
         });
         console.log(user.id);
-        
+
         if (user) {
             const result = { user_id: user.id, user_email: user.email };
             return res.status(201).send(result);
@@ -48,7 +47,7 @@ router.post("/register", errorHandler(async (req: Request, res: Response) => {
     }
 }));
 
-router.post("/login", errorHandler(async (req: Request, res: Response) => {
+router.post("/login", tryCatch(async (req: Request, res: Response) => {
     const email: string = req.body.email;
     const password: string = req.body.password;
 
@@ -59,10 +58,10 @@ router.post("/login", errorHandler(async (req: Request, res: Response) => {
 
     let user: UserAttributes;
     user = await db.User.findOne({ where: { email } });
-    
+
     if (user !== null) {
         let hashedPassword: string = user.password;
-    
+
         // Compare client password with db password
         if (user && (await bcrypt.compare(password, hashedPassword))) {
             const accessToken = jwt.sign(
@@ -79,11 +78,11 @@ router.post("/login", errorHandler(async (req: Request, res: Response) => {
                 // Options like token expiry
                 { expiresIn: "4h" }
             );
-    
+
             return res.status(200).send({ access_token: accessToken });
         }
         return res.send("something went wrong");
-        
+
     }
 
     else {

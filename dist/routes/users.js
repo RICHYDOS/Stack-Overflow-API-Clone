@@ -17,10 +17,10 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const models_1 = __importDefault(require("../models"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const errorHandler_1 = require("../utils/errorHandler");
+const tryCatch_1 = __importDefault(require("../utils/tryCatch"));
 dotenv_1.default.config();
 const router = express_1.default.Router();
-router.post("/register", (0, errorHandler_1.errorHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/register", (0, tryCatch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const displayName = req.body.displayName;
     const email = req.body.email;
     const password = req.body.password;
@@ -52,7 +52,7 @@ router.post("/register", (0, errorHandler_1.errorHandler)((req, res) => __awaite
         }
     }
 })));
-router.post("/login", (0, errorHandler_1.errorHandler)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/login", (0, tryCatch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const email = req.body.email;
     const password = req.body.password;
     if (!email || !password) {

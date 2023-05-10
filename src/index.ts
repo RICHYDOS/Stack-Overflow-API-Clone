@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import db from "./models/index";
 import users from "./routes/users";
-import {errorHandler} from "./utils/errorHandler";
+import errorHandler from "./utils/errorhandler";
 
 
 dotenv.config();
