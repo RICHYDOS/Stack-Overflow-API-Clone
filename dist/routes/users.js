@@ -11,6 +11,7 @@ dotenv_1.default.config();
 const router = express_1.default.Router();
 router.post("/register", (0, tryCatch_1.default)(users_1.register));
 router.post("/login", (0, tryCatch_1.default)(users_1.login));
+router.get("/:id", (0, tryCatch_1.default)(users_1.getOne));
 router.put("/update/:id", (0, tryCatch_1.default)(users_1.update));
 router.delete("/delete/:id", (0, tryCatch_1.default)(users_1.destroy));
 exports.default = router;

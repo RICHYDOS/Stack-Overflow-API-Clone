@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroy = exports.update = exports.login = exports.register = void 0;
+exports.destroy = exports.update = exports.getOne = exports.login = exports.register = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const models_1 = __importDefault(require("../models"));
@@ -36,7 +36,6 @@ const register = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             email,
             password: hashedPassword
         });
-        console.log(user.id);
         if (user) {
             const result = { user_id: user.id, user_email: user.email };
             return res.status(201).send(result);
@@ -77,6 +76,18 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
+const getOne = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let user;
+    user = yield models_1.default.User.findOne({ where: { id: req.params.id }, attributes: { exclude: ['password', 'updatedAt'] } });
+    if (user !== null) {
+        console.log(user);
+        return res.send(user);
+    }
+    else {
+        return res.send("User does not exist... Sign up Please");
+    }
+});
+exports.getOne = getOne;
 const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let user;
     user = yield models_1.default.User.findOne({ where: { id: req.params.id } });

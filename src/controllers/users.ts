@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import {Request, Response} from "express";
+import { Request, Response } from "express";
 import { UserAttributes } from "../models/user";
 import bcrypt from "bcrypt";
 import db from "../models";
@@ -84,6 +84,19 @@ export const login = async (req: Request, res: Response) => {
     }
 };
 
+export const getOne = async (req: Request, res: Response) => {
+    let user: UserAttributes;
+
+    user = await db.User.findOne({ where: { id: req.params.id }, attributes: { exclude: ['password', 'updatedAt'] } });
+    if (user !== null) {
+        console.log(user);
+        return res.send(user);
+    }
+    else {
+        return res.send("User does not exist... Sign up Please");
+    }
+};
+
 export const update = async (req: Request, res: Response) => {
 
     let user: UserAttributes;
@@ -97,10 +110,9 @@ export const update = async (req: Request, res: Response) => {
         const title: UserAttributes["title"] = req.body.title || user.title;
         const aboutMe: UserAttributes["aboutMe"] = req.body.aboutMe || user.aboutMe;
 
-
-        user = await db.User.update({ displayName, email, location, title, aboutMe}, {
+        user = await db.User.update({ displayName, email, location, title, aboutMe }, {
             where: {
-              id: req.params.id
+                id: req.params.id
             }
         });
         return res.send("User Updated");
@@ -122,4 +134,4 @@ export const destroy = async (req: Request, res: Response) => {
     else {
         return res.send("User does not exist... Sign up Please");
     }
-}
+};
