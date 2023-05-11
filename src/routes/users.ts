@@ -7,6 +7,7 @@ import { Request, Response } from "express";
 import tryCatch from "../utils/tryCatch";
 import { UserAttributes } from "../models/user";
 
+
 dotenv.config();
 const router = express.Router();
 
@@ -88,6 +89,46 @@ router.post("/login", tryCatch(async (req: Request, res: Response) => {
     else {
         res.status(401);
         throw new Error("Email or Password are invalid");
+    }
+}));
+
+router.put("/update/:id", tryCatch(async (req: Request, res: Response) => {
+
+    let user: UserAttributes;
+
+    user = await db.User.findOne({ where: { id: req.params.id } });
+
+    if (user !== null) {
+        const displayName: string = req.body.displayName || user.displayName;
+        const email: string = req.body.email || user.email;
+        const location: UserAttributes["location"] = req.body.location || user.location;
+        const title: UserAttributes["title"] = req.body.title || user.title;
+        const aboutMe: UserAttributes["aboutMe"] = req.body.aboutMe || user.aboutMe;
+
+
+        user = await db.User.update({ displayName, email, location, title, aboutMe}, {
+            where: {
+              id: req.params.id
+            }
+        });
+        return res.send("User Updated");
+    }
+    else {
+        return res.send("User does not exist... Sign up Please");
+    }
+}));
+
+router.delete("/delete/:id", tryCatch(async (req: Request, res: Response) => {
+
+    let user: UserAttributes;
+    user = await db.User.findOne({ where: { id: req.params.id } });
+    if (user !== null) {
+
+        await db.User.destroy({ where: { id: req.params.id } });
+        return res.status(404).send("User deleted");
+    }
+    else {
+        return res.send("User does not exist... Sign up Please");
     }
 }));
 

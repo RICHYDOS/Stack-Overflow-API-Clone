@@ -30,7 +30,6 @@ router.post("/register", (0, tryCatch_1.default)((req, res) => __awaiter(void 0,
     }
     let user;
     user = yield models_1.default.User.findOne({ where: { email } });
-    console.log(user);
     if (user !== null) {
         return res.send("User already Exists... Login Please");
     }
@@ -78,6 +77,37 @@ router.post("/login", (0, tryCatch_1.default)((req, res) => __awaiter(void 0, vo
     else {
         res.status(401);
         throw new Error("Email or Password are invalid");
+    }
+})));
+router.put("/update/:id", (0, tryCatch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let user;
+    user = yield models_1.default.User.findOne({ where: { id: req.params.id } });
+    if (user !== null) {
+        const displayName = req.body.displayName || user.displayName;
+        const email = req.body.email || user.email;
+        const location = req.body.location || user.location;
+        const title = req.body.title || user.title;
+        const aboutMe = req.body.aboutMe || user.aboutMe;
+        user = yield models_1.default.User.update({ displayName, email, location, title, aboutMe }, {
+            where: {
+                id: req.params.id
+            }
+        });
+        return res.send("User Updated");
+    }
+    else {
+        return res.send("User does not exist... Sign up Please");
+    }
+})));
+router.delete("/delete/:id", (0, tryCatch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let user;
+    user = yield models_1.default.User.findOne({ where: { id: req.params.id } });
+    if (user !== null) {
+        yield models_1.default.User.destroy({ where: { id: req.params.id } });
+        return res.status(404).send("User deleted");
+    }
+    else {
+        return res.send("User does not exist... Sign up Please");
     }
 })));
 exports.default = router;
