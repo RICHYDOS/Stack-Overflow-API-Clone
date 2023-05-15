@@ -38,7 +38,7 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: 0
         },
         answers: {
-            type: DataTypes.STRING,
+            type: DataTypes.INTEGER,
             allowNull: false,
             defaultValue: 0
         },

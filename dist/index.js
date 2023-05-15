@@ -7,7 +7,8 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const index_1 = __importDefault(require("./models/index"));
 const users_1 = __importDefault(require("./routes/users"));
-const errorhandler_1 = __importDefault(require("./utils/errorhandler"));
+const questions_1 = __importDefault(require("./routes/questions"));
+const errorhandler_1 = __importDefault(require("./middleware/errorhandler"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 5000;
@@ -16,6 +17,7 @@ index_1.default.sequelize.sync({}).then(() => {
 });
 app.use(express_1.default.json());
 app.use("/api/users", users_1.default);
+app.use("/api/questions", questions_1.default);
 app.use(errorhandler_1.default);
 app.listen(port, () => {
     console.log(`Server running on Port ${port}`);

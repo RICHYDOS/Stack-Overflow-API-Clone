@@ -1,14 +1,14 @@
 'use strict';
 import {Model} from 'sequelize';
 
-interface QuestionAttributes {
+export interface QuestionAttributes {
   id: number,
   title: string,
   description: string,
   expectation?: string,
   tags?: string,
-  votes: string,
-  answers: string
+  votes: number,
+  answers: number
 }
 
 module.exports = (sequelize: any, DataTypes:any) => {
@@ -25,8 +25,8 @@ module.exports = (sequelize: any, DataTypes:any) => {
     description!: string;
     expectation?: string;
     tags?: string;
-    votes!: string;
-    answers!: string
+    votes!: number;
+    answers!: number
 
     // Timestamps
     readonly createdAt!: Date;
@@ -68,7 +68,7 @@ module.exports = (sequelize: any, DataTypes:any) => {
       defaultValue: 0
     },
     answers: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0
     },

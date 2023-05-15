@@ -1,7 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
-import tryCatch from "../utils/tryCatch";
-import {register, login, getOne, update, destroy} from "../controllers/users";
+import tryCatch from "../middleware/tryCatch";
+import { register, login, getOne, update, destroy } from "../controllers/users";
 
 
 dotenv.config();
