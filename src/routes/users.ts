@@ -8,13 +8,9 @@ dotenv.config();
 const router = express.Router();
 
 router.post("/register", tryCatch(register));
-
 router.post("/login", tryCatch(login));
-
 router.get("/:id", tryCatch(getOne));
-
 router.put("/update/:id", tryCatch(update));
-
 router.delete("/delete/:id", tryCatch(destroy));
 
 export default router;

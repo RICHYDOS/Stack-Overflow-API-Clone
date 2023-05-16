@@ -1,10 +1,16 @@
 import { Request, Response } from "express";
 import { QuestionAttributes } from "../models/question";
+import { AnswerAttributes } from "../models/answer";
 import db from "../models";
 
 interface Question extends QuestionAttributes{
     UserId: number
 };
+
+interface Answer extends AnswerAttributes{
+    UserId: number,
+    QuestionId: number
+}
 
 export const create = async (req: Request, res: Response) => {
     const title: string = req.body.title;
@@ -92,15 +98,66 @@ export const destroy = async (req: Request, res: Response) => {
         res.status(400);
         throw new Error("Question does not exist");
     }
-
     else if (question.UserId !== req.currentUser.user.id){
         res.status(400);
         throw new Error("Access Denied");
     }
-
     else {
 
         await db.Question.destroy({ where: { id: req.params.id } });
         return res.status(200).send("Question deleted");
     }
 };
+
+export const createAnswer = async (req: Request, res: Response) => {
+    let question: Question;
+    question = await db.Question.findOne({ where: { id: req.params.id } });
+
+    if(question === null){
+        res.status(400);
+        throw new Error("Question does not exist");
+    }
+    else{
+        const title: string = req.body.title;
+        if (!title) {
+            res.status(400);
+            throw new Error("Title Field is Mandatory");
+        }
+
+        let answer: Answer;
+
+        answer = await db.Answer.create({
+            answer: title,
+            UserId: req.currentUser.user.id,
+            QuestionId: question.id
+        });
+
+        console.log(answer);
+    
+        if (answer) {
+            return res.status(201).send(answer);
+        }
+        else {
+            res.status(400);
+            throw new Error("Invalid Data");
+        }
+
+    }
+
+}
+
+export const getAnswers = async (req: Request, res: Response) => {
+
+    let answer: Answer;
+    answer = await db.Answer.findAll({ where: { QuestionId: req.params.id } });
+
+
+    if(answer === null){
+        res.status(400);
+        throw new Error("No answers for this question");
+    }
+    else{
+        return res.status(201).send(answer);
+    }
+
+}
