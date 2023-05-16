@@ -20,6 +20,7 @@ const auth_1 = require("../middleware/auth");
 dotenv_1.default.config();
 const router = express_1.default.Router();
 router.use(auth_1.auth);
+;
 router.post("/ask", (0, tryCatch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const title = req.body.title;
     const description = req.body.description;
@@ -31,7 +32,6 @@ router.post("/ask", (0, tryCatch_1.default)((req, res) => __awaiter(void 0, void
         throw new Error("Title and Description Fields are Mandatory");
     }
     let question;
-    console.log(req.currentUser.exp);
     question = yield models_1.default.Question.create({
         title,
         description,
@@ -46,6 +46,30 @@ router.post("/ask", (0, tryCatch_1.default)((req, res) => __awaiter(void 0, void
     else {
         res.status(400);
         throw new Error("Invalid Data");
+    }
+})));
+router.put("/edit/:id", (0, tryCatch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let question;
+    question = yield models_1.default.Question.findOne({ where: { id: req.params.id } });
+    if (question === null) {
+        res.status(400);
+        throw new Error("Question does not exist");
+    }
+    else if (question.UserId !== req.currentUser.user.id) {
+        res.status(400);
+        throw new Error("Access Denied");
+    }
+    else {
+        const title = req.body.title || question.title;
+        const description = req.body.description || question.description;
+        const expectation = req.body.expectation || question.expectation;
+        const tags = req.body.tags || question.tags;
+        question = yield models_1.default.Question.update({ title, description, expectation, tags }, {
+            where: {
+                id: req.params.id
+            }
+        });
+        return res.send("User Updated");
     }
 })));
 exports.default = router;
