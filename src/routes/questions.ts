@@ -75,7 +75,27 @@ router.put("/edit/:id", tryCatch(async (req: Request, res: Response) => {
     }
 }));
 
-// router.delete("/delete/:id", tryCatch(destroy));
+router.delete("/delete/:id", tryCatch(async (req: Request, res: Response) => {
+
+    let question: Question;
+    question = await db.Question.findOne({ where: { id: req.params.id } });
+
+    if(question === null){
+        res.status(400);
+        throw new Error("Question does not exist");
+    }
+
+    else if (question.UserId !== req.currentUser.user.id){
+        res.status(400);
+        throw new Error("Access Denied");
+    }
+
+    else {
+
+        await db.Question.destroy({ where: { id: req.params.id } });
+        return res.status(404).send("Question deleted");
+    }
+}));
 
 
 export default router;

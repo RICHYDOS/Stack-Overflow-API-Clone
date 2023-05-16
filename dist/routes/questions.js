@@ -72,5 +72,21 @@ router.put("/edit/:id", (0, tryCatch_1.default)((req, res) => __awaiter(void 0, 
         return res.send("User Updated");
     }
 })));
+router.delete("/delete/:id", (0, tryCatch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let question;
+    question = yield models_1.default.Question.findOne({ where: { id: req.params.id } });
+    if (question === null) {
+        res.status(400);
+        throw new Error("Question does not exist");
+    }
+    else if (question.UserId !== req.currentUser.user.id) {
+        res.status(400);
+        throw new Error("Access Denied");
+    }
+    else {
+        yield models_1.default.Question.destroy({ where: { id: req.params.id } });
+        return res.status(404).send("Question deleted");
+    }
+})));
 exports.default = router;
 //# sourceMappingURL=questions.js.map
