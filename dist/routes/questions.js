@@ -21,6 +21,22 @@ dotenv_1.default.config();
 const router = express_1.default.Router();
 router.use(auth_1.auth);
 ;
+router.get("/:id", (0, tryCatch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let question;
+    question = yield models_1.default.Question.findOne({ where: { id: req.params.id } });
+    if (question === null) {
+        res.status(400);
+        throw new Error("Question does not exist");
+    }
+    else if (question.UserId !== req.currentUser.user.id) {
+        res.status(400);
+        throw new Error("Access Denied");
+    }
+    else {
+        console.log(question);
+        return res.send(question);
+    }
+})));
 router.post("/ask", (0, tryCatch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const title = req.body.title;
     const description = req.body.description;

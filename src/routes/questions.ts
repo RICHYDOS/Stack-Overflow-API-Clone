@@ -16,6 +16,24 @@ interface Question extends QuestionAttributes{
     UserId: number
 };
 
+router.get("/:id", tryCatch(async (req: Request, res: Response) => {
+    let question: Question;
+    question = await db.Question.findOne({ where: { id: req.params.id }});
+
+    if(question === null){
+        res.status(400);
+        throw new Error("Question does not exist");
+    }
+    else if (question.UserId !== req.currentUser.user.id){
+        res.status(400);
+        throw new Error("Access Denied");
+    }
+    else {
+        console.log(question);
+        return res.send(question);
+    }
+}));
+
 router.post("/ask", tryCatch(async (req: Request, res: Response) => {
     const title: string = req.body.title;
     const description: string = req.body.description;
