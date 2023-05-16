@@ -129,7 +129,7 @@ export const destroy = async (req: Request, res: Response) => {
     if (user !== null) {
 
         await db.User.destroy({ where: { id: req.params.id } });
-        return res.status(404).send("User deleted");
+        return res.status(200).send("User deleted");
     }
     else {
         return res.send("User does not exist... Sign up Please");

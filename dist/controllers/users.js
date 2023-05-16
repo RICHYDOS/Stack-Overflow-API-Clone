@@ -114,7 +114,7 @@ const destroy = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     user = yield models_1.default.User.findOne({ where: { id: req.params.id } });
     if (user !== null) {
         yield models_1.default.User.destroy({ where: { id: req.params.id } });
-        return res.status(404).send("User deleted");
+        return res.status(200).send("User deleted");
     }
     else {
         return res.send("User does not exist... Sign up Please");
