@@ -21,22 +21,23 @@ dotenv_1.default.config();
 const router = express_1.default.Router();
 router.use(auth_1.auth);
 router.post("/ask", (0, tryCatch_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     const title = req.body.title;
     const description = req.body.description;
     const expectation = req.body.expectation;
     const tags = req.body.tags;
+    const UserId = req.currentUser.user.id;
     if (!title || !description) {
         res.status(400);
         throw new Error("Title and Description Fields are Mandatory");
     }
     let question;
+    console.log(req.currentUser.exp);
     question = yield models_1.default.Question.create({
         title,
         description,
         expectation,
         tags,
-        UserId: (_a = req.currentUser) === null || _a === void 0 ? void 0 : _a.id
+        UserId
     });
     console.log(question);
     if (question) {

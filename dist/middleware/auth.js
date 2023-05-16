@@ -17,7 +17,6 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const auth = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log(next);
     const token = req.header("auth-token");
     if (!token) {
         res.status(401);

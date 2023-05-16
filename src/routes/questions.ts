@@ -17,6 +17,7 @@ router.post("/ask", tryCatch(async (req: Request, res: Response) => {
     const description: string = req.body.description;
     const expectation: string = req.body.expectation;
     const tags: string = req.body.tags;
+    const UserId = req.currentUser.user.id
 
     if (!title || !description) {
         res.status(400);
@@ -30,7 +31,7 @@ router.post("/ask", tryCatch(async (req: Request, res: Response) => {
         description,
         expectation,
         tags,
-        UserId: req.currentUser?.id
+        UserId
     });
     
     console.log(question);

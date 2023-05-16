@@ -4,22 +4,25 @@ import { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 dotenv.config();
 
-interface UserPayload {
-    username: string;
-    email: string;
-    id: string;
+export interface UserPayload {
+    user: {
+      username: string;
+      email: string;
+      id: number;
+    };
+    iat: number;
+    exp: number
   }
 
 declare global {
     namespace Express {
       interface Request {
-        currentUser?: UserPayload;
+        currentUser: UserPayload;
       }
     }
   }
 
 export const auth = async (req: Request, res: Response, next: NextFunction) => {
-    console.log(next);
     
     const token: string | undefined = req.header("auth-token");
     if (!token) {
