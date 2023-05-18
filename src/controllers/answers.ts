@@ -1,10 +1,13 @@
 import { Request, Response } from "express";
 import { AnswerAttributes } from "../models/answer";
+import { QuestionAttributes } from "../models/question";
 import db from "../models";
 
 interface Answer extends AnswerAttributes {
     UserId: number,
-    QuestionId: number
+    QuestionId: number,
+    getQuestion(): QuestionAttributes,
+    setQuestion(question: QuestionAttributes): void
 }
 
 export const getOne = async (req: Request, res: Response) => {
@@ -62,7 +65,12 @@ export const destroy = async (req: Request, res: Response) => {
         throw new Error("Access Denied");
     }
     else {
-        await db.Answer.destroy({ where: { id: req.params.id } });
+        // When deleting an answer, reduce the number of answers in the question model
+        let question: QuestionAttributes = await answer.getQuestion();
+        question.answers = question.answers - 1;
+        console.log(await answer.setQuestion(question))
+        
+        //await db.Answer.destroy({ where: { id: req.params.id } });
         return res.status(200).send("Answer deleted");
     }
 };

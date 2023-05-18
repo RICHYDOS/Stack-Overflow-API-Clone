@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAnswers = exports.createAnswer = exports.destroy = exports.update = exports.getOne = exports.create = void 0;
+exports.downVote = exports.upVote = exports.getAnswers = exports.createAnswer = exports.destroy = exports.update = exports.getOne = exports.create = void 0;
 const models_1 = __importDefault(require("../models"));
 ;
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -123,6 +123,13 @@ const createAnswer = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         });
         console.log(answer);
         if (answer) {
+            let answerCount;
+            answerCount = question.answers + 1;
+            question = yield models_1.default.Question.update({ answers: answerCount }, {
+                where: {
+                    id: req.params.id
+                }
+            });
             return res.status(201).send(answer);
         }
         else {
@@ -145,4 +152,40 @@ const getAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     }
 });
 exports.getAnswers = getAnswers;
+const upVote = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let question;
+    question = yield models_1.default.Question.findOne({ where: { id: req.params.id } });
+    if (question === null) {
+        res.status(400);
+        throw new Error("Question does not exist");
+    }
+    else {
+        const votes = question.votes + 1;
+        question = yield models_1.default.Question.update({ votes }, {
+            where: {
+                id: req.params.id
+            }
+        });
+        return res.send("Vote Count Updated");
+    }
+});
+exports.upVote = upVote;
+const downVote = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let question;
+    question = yield models_1.default.Question.findOne({ where: { id: req.params.id } });
+    if (question === null) {
+        res.status(400);
+        throw new Error("Question does not exist");
+    }
+    else {
+        const votes = question.votes - 1;
+        question = yield models_1.default.Question.update({ votes }, {
+            where: {
+                id: req.params.id
+            }
+        });
+        return res.send("Vote Count Updated");
+    }
+});
+exports.downVote = downVote;
 //# sourceMappingURL=questions.js.map

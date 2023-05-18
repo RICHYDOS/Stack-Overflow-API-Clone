@@ -65,7 +65,9 @@ const destroy = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         throw new Error("Access Denied");
     }
     else {
-        yield models_1.default.Answer.destroy({ where: { id: req.params.id } });
+        let question = yield answer.getQuestion();
+        question.answers = question.answers - 1;
+        console.log(yield answer.setQuestion(question));
         return res.status(200).send("Answer deleted");
     }
 });

@@ -132,9 +132,17 @@ export const createAnswer = async (req: Request, res: Response) => {
             QuestionId: question.id
         });
 
+
         console.log(answer);
 
         if (answer) {
+            let answerCount: number;
+            answerCount = question.answers + 1;
+            question = await db.Question.update({ answers: answerCount }, {
+                where: {
+                    id: req.params.id
+                }
+            });
             return res.status(201).send(answer);
         }
         else {
@@ -159,3 +167,41 @@ export const getAnswers = async (req: Request, res: Response) => {
     }
 
 }
+
+export const upVote = async (req: Request, res: Response) => {
+    let question: Question;
+    question = await db.Question.findOne({ where: { id: req.params.id } });
+
+    if (question === null) {
+        res.status(400);
+        throw new Error("Question does not exist");
+    }
+    else {
+        const votes: number = question.votes + 1;
+        question = await db.Question.update({ votes }, {
+            where: {
+                id: req.params.id
+            }
+        });
+        return res.send("Vote Count Updated");
+    }
+};
+
+export const downVote = async (req: Request, res: Response) => {
+    let question: Question;
+    question = await db.Question.findOne({ where: { id: req.params.id } });
+
+    if (question === null) {
+        res.status(400);
+        throw new Error("Question does not exist");
+    }
+    else {
+        const votes: number = question.votes - 1;
+        question = await db.Question.update({ votes }, {
+            where: {
+                id: req.params.id
+            }
+        });
+        return res.send("Vote Count Updated");
+    }
+};
