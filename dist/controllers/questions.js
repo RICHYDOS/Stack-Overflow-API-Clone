@@ -136,7 +136,7 @@ const getAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     let answer;
     answer = yield models_1.default.Answer.findAll({ where: { QuestionId: req.params.id } });
     console.log(answer);
-    if (answer === null) {
+    if (answer.length === 0) {
         res.status(400);
         throw new Error("No answers for this question");
     }

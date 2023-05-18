@@ -10,10 +10,10 @@ const questions_1 = require("../controllers/questions");
 const router = express_1.default.Router();
 router.use(auth_1.auth);
 router.get("/:id", (0, tryCatch_1.default)(questions_1.getOne));
+router.get("/:id/answers", (0, tryCatch_1.default)(questions_1.getAnswers));
 router.post("/ask", (0, tryCatch_1.default)(questions_1.create));
+router.post("/:id/answers", (0, tryCatch_1.default)(questions_1.createAnswer));
 router.put("/edit/:id", (0, tryCatch_1.default)(questions_1.update));
 router.delete("/delete/:id", (0, tryCatch_1.default)(questions_1.destroy));
-router.get("/:id/answers", (0, tryCatch_1.default)(questions_1.getAnswers));
-router.post("/:id/answers", (0, tryCatch_1.default)(questions_1.createAnswer));
 exports.default = router;
 //# sourceMappingURL=questions.js.map

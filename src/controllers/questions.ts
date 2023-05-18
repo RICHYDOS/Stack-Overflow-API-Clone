@@ -3,11 +3,11 @@ import { QuestionAttributes } from "../models/question";
 import { AnswerAttributes } from "../models/answer";
 import db from "../models";
 
-interface Question extends QuestionAttributes{
+interface Question extends QuestionAttributes {
     UserId: number
 };
 
-interface Answer extends AnswerAttributes{
+interface Answer extends AnswerAttributes {
     UserId: number,
     QuestionId: number
 }
@@ -33,9 +33,9 @@ export const create = async (req: Request, res: Response) => {
         tags,
         UserId
     });
-    
+
     console.log(question);
-    
+
     if (question) {
         return res.status(201).send(question);
     }
@@ -47,13 +47,13 @@ export const create = async (req: Request, res: Response) => {
 
 export const getOne = async (req: Request, res: Response) => {
     let question: Question;
-    question = await db.Question.findOne({ where: { id: req.params.id }});
+    question = await db.Question.findOne({ where: { id: req.params.id } });
 
-    if(question === null){
+    if (question === null) {
         res.status(400);
         throw new Error("Question does not exist");
     }
-    else if (question.UserId !== req.currentUser.user.id){
+    else if (question.UserId !== req.currentUser.user.id) {
         res.status(400);
         throw new Error("Access Denied");
     }
@@ -67,19 +67,19 @@ export const update = async (req: Request, res: Response) => {
     let question: Question;
     question = await db.Question.findOne({ where: { id: req.params.id } });
 
-    if(question === null){
+    if (question === null) {
         res.status(400);
         throw new Error("Question does not exist");
     }
-    else if (question.UserId !== req.currentUser.user.id){
+    else if (question.UserId !== req.currentUser.user.id) {
         res.status(400);
         throw new Error("Access Denied");
     }
-    else{
-        const title: string = req.body.title||question.title;
-        const description: string = req.body.description||question.description;
-        const expectation: string = req.body.expectation||question.expectation;
-        const tags: string = req.body.tags||question.tags;
+    else {
+        const title: string = req.body.title || question.title;
+        const description: string = req.body.description || question.description;
+        const expectation: string = req.body.expectation || question.expectation;
+        const tags: string = req.body.tags || question.tags;
         question = await db.Question.update({ title, description, expectation, tags }, {
             where: {
                 id: req.params.id
@@ -94,11 +94,11 @@ export const destroy = async (req: Request, res: Response) => {
     let question: Question;
     question = await db.Question.findOne({ where: { id: req.params.id } });
 
-    if(question === null){
+    if (question === null) {
         res.status(400);
         throw new Error("Question does not exist");
     }
-    else if (question.UserId !== req.currentUser.user.id){
+    else if (question.UserId !== req.currentUser.user.id) {
         res.status(400);
         throw new Error("Access Denied");
     }
@@ -113,11 +113,11 @@ export const createAnswer = async (req: Request, res: Response) => {
     let question: Question;
     question = await db.Question.findOne({ where: { id: req.params.id } });
 
-    if(question === null){
+    if (question === null) {
         res.status(400);
         throw new Error("Question does not exist");
     }
-    else{
+    else {
         const title: string = req.body.title;
         if (!title) {
             res.status(400);
@@ -133,7 +133,7 @@ export const createAnswer = async (req: Request, res: Response) => {
         });
 
         console.log(answer);
-    
+
         if (answer) {
             return res.status(201).send(answer);
         }
@@ -143,22 +143,18 @@ export const createAnswer = async (req: Request, res: Response) => {
         }
 
     }
-
 }
 
 export const getAnswers = async (req: Request, res: Response) => {
-
-    let answer: Answer;
+    let answer: Answer[];
     answer = await db.Answer.findAll({ where: { QuestionId: req.params.id } });
     console.log(answer);
-    
 
-
-    if(answer === null){
+    if (answer.length === 0) {
         res.status(400);
         throw new Error("No answers for this question");
     }
-    else{
+    else {
         return res.status(201).send(answer);
     }
 
