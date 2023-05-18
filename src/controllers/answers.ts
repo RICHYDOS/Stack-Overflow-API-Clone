@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { AnswerAttributes } from "../models/answer";
 import db from "../models";
 
-
 interface Answer extends AnswerAttributes {
     UserId: number,
     QuestionId: number
@@ -40,7 +39,7 @@ export const update = async (req: Request, res: Response) => {
     }
     else {
         const title: string = req.body.title || answer.answer;
-        answer = await db.Answer.update({ title}, {
+        answer = await db.Answer.update({answer: title}, {
             where: {
                 id: req.params.id
             }
