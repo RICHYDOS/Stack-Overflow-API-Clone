@@ -8,9 +8,9 @@ const router = express.Router();
 router.use(auth);
 
 router.get("/:id", tryCatch(getOne));
+router.get("/:id/answers", tryCatch(getAnswers));
 router.post("/ask", tryCatch(create));
+router.post("/:id/answers", tryCatch(createAnswer));
 router.put("/edit/:id", tryCatch(update));
 router.delete("/delete/:id", tryCatch(destroy));
-router.get("/:id/answers", tryCatch(getAnswers))
-router.post("/:id/answers", tryCatch(createAnswer))
 export default router;

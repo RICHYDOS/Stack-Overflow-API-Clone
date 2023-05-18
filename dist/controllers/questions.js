@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroy = exports.update = exports.getOne = exports.create = void 0;
+exports.getAnswers = exports.createAnswer = exports.destroy = exports.update = exports.getOne = exports.create = void 0;
 const models_1 = __importDefault(require("../models"));
 ;
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -102,4 +102,47 @@ const destroy = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.destroy = destroy;
+const createAnswer = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let question;
+    question = yield models_1.default.Question.findOne({ where: { id: req.params.id } });
+    if (question === null) {
+        res.status(400);
+        throw new Error("Question does not exist");
+    }
+    else {
+        const title = req.body.title;
+        if (!title) {
+            res.status(400);
+            throw new Error("Title Field is Mandatory");
+        }
+        let answer;
+        answer = yield models_1.default.Answer.create({
+            answer: title,
+            UserId: req.currentUser.user.id,
+            QuestionId: question.id
+        });
+        console.log(answer);
+        if (answer) {
+            return res.status(201).send(answer);
+        }
+        else {
+            res.status(400);
+            throw new Error("Invalid Data");
+        }
+    }
+});
+exports.createAnswer = createAnswer;
+const getAnswers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let answer;
+    answer = yield models_1.default.Answer.findAll({ where: { QuestionId: req.params.id } });
+    console.log(answer);
+    if (answer === null) {
+        res.status(400);
+        throw new Error("No answers for this question");
+    }
+    else {
+        return res.status(201).send(answer);
+    }
+});
+exports.getAnswers = getAnswers;
 //# sourceMappingURL=questions.js.map

@@ -150,6 +150,8 @@ export const getAnswers = async (req: Request, res: Response) => {
 
     let answer: Answer;
     answer = await db.Answer.findAll({ where: { QuestionId: req.params.id } });
+    console.log(answer);
+    
 
 
     if(answer === null){

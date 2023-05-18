@@ -13,5 +13,7 @@ router.get("/:id", (0, tryCatch_1.default)(questions_1.getOne));
 router.post("/ask", (0, tryCatch_1.default)(questions_1.create));
 router.put("/edit/:id", (0, tryCatch_1.default)(questions_1.update));
 router.delete("/delete/:id", (0, tryCatch_1.default)(questions_1.destroy));
+router.get("/:id/answers", (0, tryCatch_1.default)(questions_1.getAnswers));
+router.post("/:id/answers", (0, tryCatch_1.default)(questions_1.createAnswer));
 exports.default = router;
 //# sourceMappingURL=questions.js.map
