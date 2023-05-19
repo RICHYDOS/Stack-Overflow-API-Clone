@@ -66,8 +66,8 @@ const destroy = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
     else {
         let question = yield answer.getQuestion();
-        question.answers = question.answers - 1;
-        console.log(yield answer.setQuestion(question));
+        yield question.decrement('answers');
+        yield models_1.default.Answer.destroy({ where: { id: req.params.id } });
         return res.status(200).send("Answer deleted");
     }
 });

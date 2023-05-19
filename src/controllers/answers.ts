@@ -65,12 +65,10 @@ export const destroy = async (req: Request, res: Response) => {
         throw new Error("Access Denied");
     }
     else {
-        // When deleting an answer, reduce the number of answers in the question model
-        let question: QuestionAttributes = await answer.getQuestion();
-        question.answers = question.answers - 1;
-        console.log(await answer.setQuestion(question))
+        let question: any = await answer.getQuestion();
+        await question.decrement('answers');
         
-        //await db.Answer.destroy({ where: { id: req.params.id } });
+        await db.Answer.destroy({ where: { id: req.params.id } });
         return res.status(200).send("Answer deleted");
     }
 };
