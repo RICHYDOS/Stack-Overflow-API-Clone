@@ -1,7 +1,7 @@
 'use strict';
 import {Model} from 'sequelize';
 
-interface Q_commentAttributes {
+export interface Q_commentAttributes {
   id: number,
   comment: string,
 }

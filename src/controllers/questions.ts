@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { QuestionAttributes } from "../models/question";
 import { AnswerAttributes } from "../models/answer";
+import { Q_commentAttributes } from "../models/q_comments";
 import db from "../models";
 
 // Some of the methods or extra fields I used in the question routes
@@ -9,6 +10,11 @@ interface Question extends QuestionAttributes {
 };
 
 interface Answer extends AnswerAttributes {
+    UserId: number,
+    QuestionId: number
+}
+
+interface Comment extends Q_commentAttributes {
     UserId: number,
     QuestionId: number
 }
@@ -214,5 +220,62 @@ export const downVote = async (req: Request, res: Response) => {
 
 // Create a Comment under a particular Question. Comments have to be either under a question or an answer
 export const createComment = async (req: Request, res: Response) => {
-    
+    let question: Question;
+    question = await db.Question.findOne({ where: { id: req.params.id } });
+
+    if (question === null) {
+        res.status(404);
+        throw new Error("Question does not exist");
+    }
+    else {
+
+        // A user can only have 1 comment per question
+        let comment: Comment;
+        comment = await db.Q_comments.findOne({ where: { UserId: question.UserId } });
+
+        if (comment === null) {
+            const title: string = req.body.title;
+            if (!title) {
+                res.status(400);
+                throw new Error("Title Field is Mandatory");
+            }
+
+            comment = await db.Q_comments.create({
+                comment: title,
+                UserId: req.currentUser.user.id,
+                QuestionId: question.id
+            });
+
+            console.log(comment);
+
+            if (comment) {
+                return res.status(201).send(comment);
+            }
+            else {
+                res.status(400);
+                throw new Error("Invalid Data");
+            }
+
+        }
+        else{
+            res.status(404);
+            throw new Error("Can't Add another comment, only edit.");
+        }
+    }
+}
+
+// Get all the comments related to a particular question
+export const getComments = async (req: Request, res: Response) => {
+    let comments: Comment[];
+    comments = await db.Q_comments.findAll({ where: { QuestionId: req.params.id } });
+    console.log(comments);
+
+    if (comments.length === 0) {
+        res.status(404);
+        throw new Error("No answers for this question");
+    }
+    else {
+        return res.status(201).send(comments);
+    }
+
 }
