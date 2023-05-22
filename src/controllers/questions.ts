@@ -211,3 +211,8 @@ export const downVote = async (req: Request, res: Response) => {
         return res.send(`Vote Count: ${question}`);
     }
 };
+
+// Create a Comment under a particular Question. Comments have to be either under a question or an answer
+export const createComment = async (req: Request, res: Response) => {
+    
+}
