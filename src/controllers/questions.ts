@@ -14,7 +14,7 @@ interface Answer extends AnswerAttributes {
     QuestionId: number
 }
 
-interface Comment extends Q_commentAttributes {
+export interface Comment extends Q_commentAttributes {
     UserId: number,
     QuestionId: number
 }
