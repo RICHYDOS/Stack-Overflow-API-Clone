@@ -4,6 +4,7 @@ import db from "./models/index";
 import users from "./routes/users";
 import questions from "./routes/questions";
 import answers from "./routes/answers";
+import qComments from "./routes/q_comments";
 import errorHandler from "./middleware/errorhandler";
 
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use("/api/users", users);
 app.use("/api/questions", questions);
 app.use("/api/answers", answers);
+app.use("/api/q_comments", qComments);
 app.use(errorHandler);
 
 
