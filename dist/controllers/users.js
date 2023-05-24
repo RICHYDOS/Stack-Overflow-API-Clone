@@ -91,33 +91,41 @@ exports.getOne = getOne;
 const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let user;
     user = yield models_1.default.User.findOne({ where: { id: req.params.id } });
-    if (user !== null) {
+    if (user === null) {
+        return res.send("User does not exist... Sign up Please");
+    }
+    else if (user.id !== req.currentUser.user.id) {
+        res.status(400);
+        throw new Error("Access Denied");
+    }
+    else {
         const displayName = req.body.displayName || user.displayName;
         const email = req.body.email || user.email;
         const location = req.body.location || user.location;
         const title = req.body.title || user.title;
         const aboutMe = req.body.aboutMe || user.aboutMe;
         user = yield models_1.default.User.update({ displayName, email, location, title, aboutMe }, {
-            where: {
-                id: req.params.id
-            }
+            where: { id: req.params.id },
+            attributes: { exclude: ['password', 'updatedAt'] },
+            returning: true
         });
-        return res.send("User Updated");
-    }
-    else {
-        return res.send("User does not exist... Sign up Please");
+        return res.send(`User: ${user}`);
     }
 });
 exports.update = update;
 const destroy = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let user;
     user = yield models_1.default.User.findOne({ where: { id: req.params.id } });
-    if (user !== null) {
-        yield models_1.default.User.destroy({ where: { id: req.params.id } });
-        return res.status(200).send("User deleted");
+    if (user === null) {
+        return res.send("User does not exist... Sign up Please");
+    }
+    else if (user.id !== req.currentUser.user.id) {
+        res.status(400);
+        throw new Error("Access Denied");
     }
     else {
-        return res.send("User does not exist... Sign up Please");
+        yield models_1.default.User.destroy({ where: { id: req.params.id } });
+        return res.status(200).send("User deleted");
     }
 });
 exports.destroy = destroy;

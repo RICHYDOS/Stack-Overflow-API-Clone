@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.downVote = exports.upVote = exports.getAnswers = exports.createAnswer = exports.destroy = exports.update = exports.getOne = exports.create = void 0;
+exports.getComments = exports.createComment = exports.downVote = exports.upVote = exports.getAnswers = exports.createAnswer = exports.destroy = exports.update = exports.getOne = exports.create = void 0;
 const models_1 = __importDefault(require("../models"));
 ;
 const create = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -50,10 +50,6 @@ const getOne = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(400);
         throw new Error("Question does not exist");
     }
-    else if (question.UserId !== req.currentUser.user.id) {
-        res.status(400);
-        throw new Error("Access Denied");
-    }
     else {
         console.log(question);
         return res.send(question);
@@ -79,9 +75,9 @@ const update = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         question = yield models_1.default.Question.update({ title, description, expectation, tags }, {
             where: {
                 id: req.params.id
-            }
+            }, returning: ['title', 'description']
         });
-        return res.send("User Updated");
+        return res.send(question);
     }
 });
 exports.update = update;
@@ -164,9 +160,9 @@ const upVote = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         question = yield models_1.default.Question.update({ votes }, {
             where: {
                 id: req.params.id
-            }
+            }, returning: ['votes']
         });
-        return res.send("Vote Count Updated");
+        return res.send(`Vote Count: ${question}`);
     }
 });
 exports.upVote = upVote;
@@ -182,10 +178,60 @@ const downVote = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         question = yield models_1.default.Question.update({ votes }, {
             where: {
                 id: req.params.id
-            }
+            }, returning: ['votes']
         });
-        return res.send("Vote Count Updated");
+        return res.send(`Vote Count: ${question}`);
     }
 });
 exports.downVote = downVote;
+const createComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let question;
+    question = yield models_1.default.Question.findOne({ where: { id: req.params.id } });
+    if (question === null) {
+        res.status(404);
+        throw new Error("Question does not exist");
+    }
+    else {
+        let comment;
+        comment = yield models_1.default.Q_comments.findOne({ where: { UserId: question.UserId } });
+        if (comment === null) {
+            const title = req.body.title;
+            if (!title) {
+                res.status(400);
+                throw new Error("Title Field is Mandatory");
+            }
+            comment = yield models_1.default.Q_comments.create({
+                comment: title,
+                UserId: req.currentUser.user.id,
+                QuestionId: question.id
+            });
+            console.log(comment);
+            if (comment) {
+                return res.status(201).send(comment);
+            }
+            else {
+                res.status(400);
+                throw new Error("Invalid Data");
+            }
+        }
+        else {
+            res.status(404);
+            throw new Error("Can't Add another comment, only edit.");
+        }
+    }
+});
+exports.createComment = createComment;
+const getComments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let comments;
+    comments = yield models_1.default.Q_comments.findAll({ where: { QuestionId: req.params.id } });
+    console.log(comments);
+    if (comments.length === 0) {
+        res.status(404);
+        throw new Error("No answers for this question");
+    }
+    else {
+        return res.status(201).send(comments);
+    }
+});
+exports.getComments = getComments;
 //# sourceMappingURL=questions.js.map
