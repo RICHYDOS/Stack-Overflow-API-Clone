@@ -272,7 +272,7 @@ export const getComments = async (req: Request, res: Response) => {
 
     if (comments.length === 0) {
         res.status(404);
-        throw new Error("No answers for this question");
+        throw new Error("No Comments for this question");
     }
     else {
         return res.status(201).send(comments);

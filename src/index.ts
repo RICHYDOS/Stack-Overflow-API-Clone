@@ -5,6 +5,7 @@ import users from "./routes/users";
 import questions from "./routes/questions";
 import answers from "./routes/answers";
 import qComments from "./routes/q_comments";
+import aComments from "./routes/a_comments";
 import errorHandler from "./middleware/errorhandler";
 
 
@@ -21,6 +22,7 @@ app.use("/api/users", users);
 app.use("/api/questions", questions);
 app.use("/api/answers", answers);
 app.use("/api/q_comments", qComments);
+app.use("/api/a_comments", aComments);
 app.use(errorHandler);
 
 

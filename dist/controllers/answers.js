@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.destroy = exports.update = exports.getOne = void 0;
+exports.getComments = exports.createComment = exports.destroy = exports.update = exports.getOne = void 0;
 const models_1 = __importDefault(require("../models"));
 const getOne = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let answer;
@@ -72,4 +72,47 @@ const destroy = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.destroy = destroy;
+const createComment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let answer;
+    answer = yield models_1.default.Answer.findOne({ where: { id: req.params.id } });
+    if (answer === null) {
+        res.status(404);
+        throw new Error("Answer does not exist");
+    }
+    else {
+        let comment;
+        const title = req.body.title;
+        if (!title) {
+            res.status(400);
+            throw new Error("Title Field is Mandatory");
+        }
+        comment = yield models_1.default.A_comments.create({
+            comment: title,
+            UserId: req.currentUser.user.id,
+            AnswerId: answer.id
+        });
+        console.log(comment);
+        if (comment) {
+            return res.status(201).send(comment);
+        }
+        else {
+            res.status(400);
+            throw new Error("Invalid Data");
+        }
+    }
+});
+exports.createComment = createComment;
+const getComments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    let comments;
+    comments = yield models_1.default.A_comments.findAll({ where: { AnswerId: req.params.id } });
+    console.log(comments);
+    if (comments.length === 0) {
+        res.status(404);
+        throw new Error("No Comments for this Answer");
+    }
+    else {
+        return res.status(201).send(comments);
+    }
+});
+exports.getComments = getComments;
 //# sourceMappingURL=answers.js.map

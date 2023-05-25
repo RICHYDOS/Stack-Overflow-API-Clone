@@ -6,13 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const tryCatch_1 = __importDefault(require("../middleware/tryCatch"));
 const auth_1 = require("../middleware/auth");
-const answers_1 = require("../controllers/answers");
+const a_comments_1 = require("../controllers/a_comments");
 const router = express_1.default.Router();
 router.use(auth_1.auth);
-router.get("/:id", (0, tryCatch_1.default)(answers_1.getOne));
-router.get("/:id/comments", (0, tryCatch_1.default)(answers_1.getComments));
-router.post("/:id/comments", (0, tryCatch_1.default)(answers_1.createComment));
-router.put("/edit/:id", (0, tryCatch_1.default)(answers_1.update));
-router.delete("/delete/:id", (0, tryCatch_1.default)(answers_1.destroy));
+router.get("/:id", (0, tryCatch_1.default)(a_comments_1.getOne));
+router.put("/edit/:id", (0, tryCatch_1.default)(a_comments_1.update));
+router.delete("/delete/:id", (0, tryCatch_1.default)(a_comments_1.destroy));
 exports.default = router;
-//# sourceMappingURL=answers.js.map
+//# sourceMappingURL=a_comments.js.map

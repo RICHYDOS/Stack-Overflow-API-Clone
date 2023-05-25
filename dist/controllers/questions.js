@@ -227,7 +227,7 @@ const getComments = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     console.log(comments);
     if (comments.length === 0) {
         res.status(404);
-        throw new Error("No answers for this question");
+        throw new Error("No Comments for this question");
     }
     else {
         return res.status(201).send(comments);
