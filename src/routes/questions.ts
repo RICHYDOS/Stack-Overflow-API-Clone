@@ -15,6 +15,6 @@ router.post("/:id/answers", tryCatch(createAnswer));
 router.post("/:id/comments", tryCatch(createComment));
 router.put("/:id/upvote", tryCatch(upVote));
 router.put("/:id/downvote", tryCatch(downVote));
-router.put("/edit/:id", tryCatch(update));
-router.delete("/delete/:id", tryCatch(destroy));
+router.put("/:id", tryCatch(update));
+router.delete("/:id", tryCatch(destroy));
 export default router;

@@ -8,7 +8,6 @@ import qComments from "./routes/q_comments";
 import aComments from "./routes/a_comments";
 import errorHandler from "./middleware/errorhandler";
 
-
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -21,8 +20,8 @@ app.use(express.json());
 app.use("/api/users", users);
 app.use("/api/questions", questions);
 app.use("/api/answers", answers);
-app.use("/api/q_comments", qComments);
-app.use("/api/a_comments", aComments);
+app.use("/api/question-comments", qComments);
+app.use("/api/answer-comments", aComments);
 app.use(errorHandler);
 
 
