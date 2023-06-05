@@ -95,8 +95,14 @@ export const getOne = async (req: Request, res: Response) => {
     // Get all the user's details except for the "password" and "updatedAt" properties
     user = await db.User.findOne({ where: { id: req.params.id }, attributes: { exclude: ['password', 'updatedAt'] } });
     if (user !== null) {
-        console.log(user);
-        return res.send(user);
+        if (user.id === req.currentUser.user.id){
+            console.log(user);
+            return res.send(user);
+        }
+        else{
+            res.status(403);
+            throw new Error("Access Denied");
+        }
     }
     else {
         return res.send("User does not exist... Sign up Please");
@@ -115,7 +121,7 @@ export const update = async (req: Request, res: Response) => {
     }
     // A user cannot edit another User's details
     else if (user.id !== req.currentUser.user.id) {
-        res.status(400);
+        res.status(403);
         throw new Error("Access Denied");
     }
     else {
@@ -145,7 +151,7 @@ export const destroy = async (req: Request, res: Response) => {
     }
     // A user cannot Delete another User's account
     else if (user.id !== req.currentUser.user.id) {
-        res.status(400);
+        res.status(403);
         throw new Error("Access Denied");
     }
     else {
