@@ -1,5 +1,5 @@
 import express from "express";
-import dotenv from "dotenv";
+import {settings} from "./config/app";
 import db from "./models/index";
 import users from "./routes/users";
 import questions from "./routes/questions";
@@ -8,9 +8,8 @@ import qComments from "./routes/q_comments";
 import aComments from "./routes/a_comments";
 import errorHandler from "./middleware/errorhandler";
 
-dotenv.config();
 const app = express();
-const port = process.env.PORT || 5000;
+const port = settings.port || 5000;
 
 db.sequelize.sync({}).then(() => {
     console.log("Connected to the Database");

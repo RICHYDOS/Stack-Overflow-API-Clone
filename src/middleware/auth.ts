@@ -1,8 +1,7 @@
 
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
-import dotenv from "dotenv";
-dotenv.config();
+import {settings} from "../config/app";
 
 export interface UserPayload {
     user: {
@@ -31,7 +30,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     };
 
     try {
-        const payload = jwt.verify(token, process.env.ACCESSTOKENSECRET as string) as UserPayload;
+        const payload = jwt.verify(token, settings.secretKey) as UserPayload;
         req.currentUser = payload;
         
         next();

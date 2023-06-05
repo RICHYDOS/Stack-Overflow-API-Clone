@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { UserAttributes } from "../models/user";
 import bcrypt from "bcrypt";
+import {settings} from "../config/app";
 import db from "../models";
 
 // Register a user
@@ -70,7 +71,7 @@ export const login = async (req: Request, res: Response) => {
                     },
                 },
                 //Access Token Secret Key
-                process.env.ACCESSTOKENSECRET as string,
+                settings.secretKey,
                 // Options like token expiry
                 { expiresIn: "4h" }
             );
