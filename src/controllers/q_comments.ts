@@ -8,16 +8,16 @@ export const getOne = async (req: Request, res: Response) => {
     comment = await db.Q_comments.findOne({ where: { id: req.params.id } });
 
     if (comment === null) {
-        res.status(400);
+        res.status(404);
         throw new Error("Comment does not exist");
     }
     else if (comment.UserId !== req.currentUser.user.id) {
-        res.status(400);
+        res.status(403);
         throw new Error("Access Denied");
     }
     else {
         console.log(comment);
-        return res.send(comment);
+        return res.status(200).send(comment);
     }
 };
 
@@ -27,12 +27,12 @@ export const update = async (req: Request, res: Response) => {
     comment = await db.Q_comments.findOne({ where: { id: req.params.id } });
 
     if (comment === null) {
-        res.status(400);
+        res.status(404);
         throw new Error("Comment does not exist");
     }
     // Check whether the comment was created by that user
     else if (comment.UserId !== req.currentUser.user.id) {
-        res.status(400);
+        res.status(403);
         throw new Error("Access Denied");
     }
     else {
@@ -42,7 +42,7 @@ export const update = async (req: Request, res: Response) => {
                 id: req.params.id
             }
         });
-        return res.send("Comment Updated");
+        return res.status(200).send("Comment Updated");
     }
 };
 
@@ -53,11 +53,11 @@ export const destroy = async (req: Request, res: Response) => {
     comment = await db.Q_comments.findOne({ where: { id: req.params.id } });
 
     if (comment === null) {
-        res.status(400);
+        res.status(404);
         throw new Error("Comment does not exist");
     }
     else if (comment.UserId !== req.currentUser.user.id) {
-        res.status(400);
+        res.status(403);
         throw new Error("Access Denied");
     }
     else {

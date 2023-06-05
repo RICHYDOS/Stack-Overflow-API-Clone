@@ -25,7 +25,10 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     
     const token: string | undefined = req.header("auth-token");
     if (!token) {
-        res.status(401);
+        res.status(401).send({
+          "Title": "Error",
+          "Message": "User is not Authorized or Token is missing"
+        });
         throw new Error("User is not Authorized or Token is missing ");
     };
 

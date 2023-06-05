@@ -74,12 +74,12 @@ export const update = async (req: Request, res: Response) => {
     question = await db.Question.findOne({ where: { id: req.params.id } });
 
     if (question === null) {
-        res.status(400);
+        res.status(404);
         throw new Error("Question does not exist");
     }
     // Only a user that creates a question can edit it
     else if (question.UserId !== req.currentUser.user.id) {
-        res.status(400);
+        res.status(403);
         throw new Error("Access Denied");
     }
     else {
@@ -105,11 +105,11 @@ export const destroy = async (req: Request, res: Response) => {
     question = await db.Question.findOne({ where: { id: req.params.id } });
 
     if (question === null) {
-        res.status(400);
+        res.status(404);
         throw new Error("Question does not exist");
     }
     else if (question.UserId !== req.currentUser.user.id) {
-        res.status(400);
+        res.status(403);
         throw new Error("Access Denied");
     }
     else {
@@ -124,7 +124,7 @@ export const createAnswer = async (req: Request, res: Response) => {
     question = await db.Question.findOne({ where: { id: req.params.id } });
 
     if (question === null) {
-        res.status(400);
+        res.status(404);
         throw new Error("Question does not exist");
     }
     else {
@@ -169,11 +169,11 @@ export const getAnswers = async (req: Request, res: Response) => {
 
     // Since answer is an array of objects, I can use the ""length" method
     if (answer.length === 0) {
-        res.status(400);
+        res.status(404);
         throw new Error("No answers for this question");
     }
     else {
-        return res.status(201).send(answer);
+        return res.status(200).send(answer);
     }
 
 }
@@ -184,7 +184,7 @@ export const upVote = async (req: Request, res: Response) => {
     question = await db.Question.findOne({ where: { id: req.params.id } });
 
     if (question === null) {
-        res.status(400);
+        res.status(404);
         throw new Error("Question does not exist");
     }
     else {
@@ -194,7 +194,7 @@ export const upVote = async (req: Request, res: Response) => {
                 id: req.params.id
             }, returning: ['votes']
         });
-        return res.send(`Vote Count: ${question}`);
+        return res.status(200).send(`Vote Count: ${question}`);
     }
 };
 
@@ -204,7 +204,7 @@ export const downVote = async (req: Request, res: Response) => {
     question = await db.Question.findOne({ where: { id: req.params.id } });
 
     if (question === null) {
-        res.status(400);
+        res.status(404);
         throw new Error("Question does not exist");
     }
     else {
@@ -214,7 +214,7 @@ export const downVote = async (req: Request, res: Response) => {
                 id: req.params.id
             }, returning: ['votes']
         });
-        return res.send(`Vote Count: ${question}`);
+        return res.status(200).send(`Vote Count: ${question}`);
     }
 };
 
@@ -258,7 +258,7 @@ export const createComment = async (req: Request, res: Response) => {
 
         }
         else{
-            res.status(404);
+            res.status(400);
             throw new Error("Can't Add another comment, only edit.");
         }
     }
@@ -275,7 +275,7 @@ export const getComments = async (req: Request, res: Response) => {
         throw new Error("No Comments for this question");
     }
     else {
-        return res.status(201).send(comments);
+        return res.status(200).send(comments);
     }
 
 }

@@ -22,11 +22,11 @@ export const getOne = async (req: Request, res: Response) => {
     answer = await db.Answer.findOne({ where: { id: req.params.id } });
 
     if (answer === null) {
-        res.status(400);
+        res.status(404);
         throw new Error("Answer does not exist");
     }
     else if (answer.UserId !== req.currentUser.user.id) {
-        res.status(400);
+        res.status(403);
         throw new Error("Access Denied");
     }
     else {
@@ -41,12 +41,12 @@ export const update = async (req: Request, res: Response) => {
     answer = await db.Answer.findOne({ where: { id: req.params.id } });
 
     if (answer === null) {
-        res.status(400);
+        res.status(404);
         throw new Error("Answer does not exist");
     }
     // Check whether the answer was created by that user
     else if (answer.UserId !== req.currentUser.user.id) {
-        res.status(400);
+        res.status(403);
         throw new Error("Access Denied");
     }
     else {
@@ -56,7 +56,7 @@ export const update = async (req: Request, res: Response) => {
                 id: req.params.id
             }
         });
-        return res.send("Answer Updated");
+        return res.status(200).send("Answer Updated");
     }
 };
 
@@ -67,11 +67,11 @@ export const destroy = async (req: Request, res: Response) => {
     answer = await db.Answer.findOne({ where: { id: req.params.id } });
 
     if (answer === null) {
-        res.status(400);
+        res.status(404);
         throw new Error("Answer does not exist");
     }
     else if (answer.UserId !== req.currentUser.user.id) {
-        res.status(400);
+        res.status(403);
         throw new Error("Access Denied");
     }
     else {
@@ -110,7 +110,7 @@ export const createComment = async (req: Request, res: Response) => {
         console.log(comment);
 
         if (comment) {
-            return res.status(201).send(comment);
+            return res.status(200).send(comment);
         }
         else {
             res.status(400);
@@ -131,7 +131,7 @@ export const getComments = async (req: Request, res: Response) => {
         throw new Error("No Comments for this Answer");
     }
     else {
-        return res.status(201).send(comments);
+        return res.status(200).send(comments);
     }
 
 }
