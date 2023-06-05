@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { AnswerAttributes } from "../models/answer";
-import { QuestionAttributes } from "../models/question";
-import { A_commentAttributes } from "../models/a_comments";
+import { AnswerAttributes } from "../models/answers";
+import { QuestionAttributes } from "../models/questions";
+import { Answer_commentAttributes } from "../models/answer_comments";
 import db from "../models";
 
 // Extra methods that I used in the Answer Routes
@@ -11,7 +11,7 @@ interface Answer extends AnswerAttributes {
     getQuestion(): QuestionAttributes,
 }
 
-export interface Comment extends A_commentAttributes {
+export interface Comment extends Answer_commentAttributes {
     UserId: number,
     AnswerId: number
 }

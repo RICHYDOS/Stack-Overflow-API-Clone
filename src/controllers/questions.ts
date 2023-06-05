@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { QuestionAttributes } from "../models/question";
-import { AnswerAttributes } from "../models/answer";
-import { Q_commentAttributes } from "../models/q_comments";
+import { QuestionAttributes } from "../models/questions";
+import { AnswerAttributes } from "../models/answers";
+import { Question_commentAttributes } from "../models/question_comments";
 import db from "../models";
 
 // Some of the methods or extra fields I used in the question routes
@@ -14,7 +14,7 @@ interface Answer extends AnswerAttributes {
     QuestionId: number
 }
 
-export interface Comment extends Q_commentAttributes {
+export interface Comment extends Question_commentAttributes {
     UserId: number,
     QuestionId: number
 }
@@ -92,7 +92,7 @@ export const update = async (req: Request, res: Response) => {
         question = await db.Question.update({ title, description, expectation, tags }, {
             where: {
                 id: req.params.id
-            }, returning: ['title','description']
+            }, returning: ['title', 'description']
         });
         return res.send(question);
     }
@@ -146,7 +146,7 @@ export const createAnswer = async (req: Request, res: Response) => {
         if (answer) {
             // If an answer was created increase the answerCount in the question table by 1
             let answerCount: number;
-            answerCount = question.answers + 1;
+            answerCount = question.answer_count + 1;
             question = await db.Question.update({ answers: answerCount }, {
                 where: {
                     id: req.params.id
@@ -257,7 +257,7 @@ export const createComment = async (req: Request, res: Response) => {
             }
 
         }
-        else{
+        else {
             res.status(400);
             throw new Error("Can't Add another comment, only edit.");
         }

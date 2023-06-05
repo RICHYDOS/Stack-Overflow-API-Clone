@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
-import { UserAttributes } from "../models/user";
+import { UserAttributes } from "../models/users";
 import bcrypt from "bcrypt";
 import {settings} from "../config/app";
 import db from "../models";
@@ -65,7 +65,7 @@ export const login = async (req: Request, res: Response) => {
                 //Payload
                 {
                     user: {
-                        username: user.displayName,
+                        username: user.display_name,
                         email: user.email,
                         id: user.id
                     },
@@ -125,11 +125,11 @@ export const update = async (req: Request, res: Response) => {
         throw new Error("Access Denied");
     }
     else {
-        const displayName: string = req.body.displayName || user.displayName;
+        const displayName: string = req.body.displayName || user.display_name;
         const email: string = req.body.email || user.email;
         const location: UserAttributes["location"] = req.body.location || user.location;
         const title: UserAttributes["title"] = req.body.title || user.title;
-        const aboutMe: UserAttributes["aboutMe"] = req.body.aboutMe || user.aboutMe;
+        const aboutMe: UserAttributes["about_me"] = req.body.aboutMe || user.about_me;
 
         // Update the necessary fields but leave out the password and updatedAt properties in the returned document
         user = await db.User.update({ displayName, email, location, title, aboutMe }, {
