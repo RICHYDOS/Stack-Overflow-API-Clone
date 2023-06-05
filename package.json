@@ -21,7 +21,7 @@
   "homepage": "https://github.com/RICHYDOS/Stack-Overflow-API-Clone#readme",
   "devDependencies": {
     "nodemon": "^2.0.22",
-    "sequelize-cli": "^6.6.0",
+    "sequelize-cli": "^6.6.1",
     "typescript": "^5.0.4"
   },
   "dependencies": {

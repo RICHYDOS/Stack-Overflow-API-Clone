@@ -12,7 +12,7 @@ const config = setting.development;
 
 let sequelize: any;
 
-sequelize = new Sequelize(config.database_development, config.username_development, config.password_development, config);
+sequelize = new Sequelize(config.database, config.username, config.password, {dialect: 'mysql'});
 
 
 fs
