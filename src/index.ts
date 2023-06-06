@@ -4,8 +4,8 @@ import db from "./models/index";
 import users from "./routes/users";
 import questions from "./routes/questions";
 import answers from "./routes/answers";
-import qComments from "./routes/q_comments";
-import aComments from "./routes/a_comments";
+import qComments from "./routes/question_comments";
+import aComments from "./routes/answer_comments";
 import errorHandler from "./middleware/errorhandler";
 
 const app = express();

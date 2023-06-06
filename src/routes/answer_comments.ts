@@ -1,7 +1,7 @@
 import express from "express";
 import tryCatch from "../middleware/tryCatch";
-import {auth} from "../middleware/auth";
-import {update, getOne, destroy} from "../controllers/q_comments";
+import { auth } from "../middleware/auth";
+import { update, getOne, destroy } from "../controllers/answer_comments";
 
 const router = express.Router();
 

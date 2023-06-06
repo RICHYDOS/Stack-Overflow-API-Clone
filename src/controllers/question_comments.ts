@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { Comment } from "../controllers/questions";
+import { Comment } from "./questions";
 import db from "../models";
 
 // Get one Question Comment
