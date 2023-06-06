@@ -16,7 +16,6 @@ export interface Comment extends Answer_commentAttributes {
     AnswerId: number
 }
 
-// Get one answer
 export const getOne = async (req: Request, res: Response) => {
     let answer: Answer;
     answer = await db.Answer.findOne({ where: { id: req.params.id } });
@@ -35,7 +34,6 @@ export const getOne = async (req: Request, res: Response) => {
     }
 };
 
-// Edit an answer
 export const update = async (req: Request, res: Response) => {
     let answer: Answer;
     answer = await db.Answer.findOne({ where: { id: req.params.id } });
@@ -60,7 +58,6 @@ export const update = async (req: Request, res: Response) => {
     }
 };
 
-// Delete an answer
 export const destroy = async (req: Request, res: Response) => {
 
     let answer: Answer;
@@ -76,7 +73,7 @@ export const destroy = async (req: Request, res: Response) => {
     }
     else {
         // Not sure what "type" should be here
-        // Gets the question related to a particular answer and decreases the answerCount in Questions whenever a user deletes an answer
+        // Gets the question related to a particular answer and decreases the answer count in Questions whenever a user deletes an answer
         let question: any = await answer.getQuestion();
         await question.decrement('answers');
 

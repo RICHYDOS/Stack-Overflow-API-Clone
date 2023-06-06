@@ -19,7 +19,6 @@ export interface Comment extends Question_commentAttributes {
     QuestionId: number
 }
 
-// Create a question
 export const create = async (req: Request, res: Response) => {
     const title: string = req.body.title;
     const description: string = req.body.description;
@@ -53,7 +52,6 @@ export const create = async (req: Request, res: Response) => {
     }
 };
 
-// Get one question
 export const getOne = async (req: Request, res: Response) => {
     let question: Question;
     question = await db.Question.findOne({ where: { id: req.params.id } });
@@ -68,7 +66,6 @@ export const getOne = async (req: Request, res: Response) => {
     }
 };
 
-// Update a question
 export const update = async (req: Request, res: Response) => {
     let question: Question;
     question = await db.Question.findOne({ where: { id: req.params.id } });
@@ -77,7 +74,6 @@ export const update = async (req: Request, res: Response) => {
         res.status(404);
         throw new Error("Question does not exist");
     }
-    // Only a user that creates a question can edit it
     else if (question.UserId !== req.currentUser.user.id) {
         res.status(403);
         throw new Error("Access Denied");
@@ -98,7 +94,6 @@ export const update = async (req: Request, res: Response) => {
     }
 };
 
-// Delete a question
 export const destroy = async (req: Request, res: Response) => {
 
     let question: Question;
@@ -118,7 +113,7 @@ export const destroy = async (req: Request, res: Response) => {
     }
 };
 
-// Create an Answer. An answer cannot exist without a question
+// An answer cannot exist without a question
 export const createAnswer = async (req: Request, res: Response) => {
     let question: Question;
     question = await db.Question.findOne({ where: { id: req.params.id } });
@@ -144,7 +139,7 @@ export const createAnswer = async (req: Request, res: Response) => {
         console.log(answer);
 
         if (answer) {
-            // If an answer was created increase the answerCount in the question table by 1
+            // If an answer was created increase the answer count in the question table by 1
             let answerCount: number;
             answerCount = question.answer_count + 1;
             question = await db.Question.update({ answers: answerCount }, {
@@ -167,7 +162,7 @@ export const getAnswers = async (req: Request, res: Response) => {
     answer = await db.Answer.findAll({ where: { QuestionId: req.params.id } });
     console.log(answer);
 
-    // Since answer is an array of objects, I can use the ""length" method
+    // answer is an array of objects
     if (answer.length === 0) {
         res.status(404);
         throw new Error("No answers for this question");
@@ -178,7 +173,6 @@ export const getAnswers = async (req: Request, res: Response) => {
 
 }
 
-// Upvote a question
 export const upVote = async (req: Request, res: Response) => {
     let question: Question;
     question = await db.Question.findOne({ where: { id: req.params.id } });
@@ -198,7 +192,6 @@ export const upVote = async (req: Request, res: Response) => {
     }
 };
 
-// Downvote a question
 export const downVote = async (req: Request, res: Response) => {
     let question: Question;
     question = await db.Question.findOne({ where: { id: req.params.id } });
@@ -218,7 +211,7 @@ export const downVote = async (req: Request, res: Response) => {
     }
 };
 
-// Create a Comment under a particular Question. Comments have to be either under a question or an answer
+// Comments have to be either under a question or an answer
 export const createComment = async (req: Request, res: Response) => {
     let question: Question;
     question = await db.Question.findOne({ where: { id: req.params.id } });

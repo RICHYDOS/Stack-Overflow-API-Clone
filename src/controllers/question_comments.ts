@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { Comment } from "./questions";
 import db from "../models";
 
-// Get one Question Comment
 export const getOne = async (req: Request, res: Response) => {
     let comment: Comment;
     comment = await db.Q_comments.findOne({ where: { id: req.params.id } });
@@ -21,7 +20,6 @@ export const getOne = async (req: Request, res: Response) => {
     }
 };
 
-// Edit a question comment
 export const update = async (req: Request, res: Response) => {
     let comment: Comment;
     comment = await db.Q_comments.findOne({ where: { id: req.params.id } });
@@ -30,7 +28,6 @@ export const update = async (req: Request, res: Response) => {
         res.status(404);
         throw new Error("Comment does not exist");
     }
-    // Check whether the comment was created by that user
     else if (comment.UserId !== req.currentUser.user.id) {
         res.status(403);
         throw new Error("Access Denied");
@@ -46,7 +43,6 @@ export const update = async (req: Request, res: Response) => {
     }
 };
 
-// Only a user can Delete his/her Comment
 export const destroy = async (req: Request, res: Response) => {
 
     let comment: Comment;

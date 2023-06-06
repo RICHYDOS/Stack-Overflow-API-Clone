@@ -5,7 +5,6 @@ import bcrypt from "bcrypt";
 import {settings} from "../config/app";
 import db from "../models";
 
-// Register a user
 export const register = async (req: Request, res: Response) => {
     const displayName: string = req.body.displayName;
     const email: string = req.body.email;
@@ -18,7 +17,6 @@ export const register = async (req: Request, res: Response) => {
 
     let user: UserAttributes;
 
-    // Check whether user is already in db
     user = await db.User.findOne({ where: { email } });
 
     if (user !== null) {
@@ -43,7 +41,6 @@ export const register = async (req: Request, res: Response) => {
     }
 };
 
-// Log a user in
 export const login = async (req: Request, res: Response) => {
     const email: string = req.body.email;
     const password: string = req.body.password;
@@ -88,11 +85,9 @@ export const login = async (req: Request, res: Response) => {
     }
 };
 
-// View User Profile
 export const getOne = async (req: Request, res: Response) => {
     let user: UserAttributes;
 
-    // Get all the user's details except for the "password" and "updatedAt" properties
     user = await db.User.findOne({ where: { id: req.params.id }, attributes: { exclude: ['password', 'updatedAt'] } });
     if (user !== null) {
         if (user.id === req.currentUser.user.id){
@@ -109,7 +104,6 @@ export const getOne = async (req: Request, res: Response) => {
     }
 };
 
-// Edit user profile
 export const update = async (req: Request, res: Response) => {
 
     let user: UserAttributes;
@@ -119,7 +113,6 @@ export const update = async (req: Request, res: Response) => {
     if (user === null) {
         return res.send("User does not exist... Sign up Please");
     }
-    // A user cannot edit another User's details
     else if (user.id !== req.currentUser.user.id) {
         res.status(403);
         throw new Error("Access Denied");
@@ -131,7 +124,6 @@ export const update = async (req: Request, res: Response) => {
         const title: UserAttributes["title"] = req.body.title || user.title;
         const aboutMe: UserAttributes["about_me"] = req.body.aboutMe || user.about_me;
 
-        // Update the necessary fields but leave out the password and updatedAt properties in the returned document
         user = await db.User.update({ displayName, email, location, title, aboutMe }, {
             where: { id: req.params.id },
             attributes: { exclude: ['password', 'updatedAt'] },
@@ -141,7 +133,6 @@ export const update = async (req: Request, res: Response) => {
     }
 };
 
-// Delete User Profile
 export const destroy = async (req: Request, res: Response) => {
 
     let user: UserAttributes;

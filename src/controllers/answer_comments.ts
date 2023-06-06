@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { Comment } from "./answers";
 import db from "../models";
 
-// Get one Answer Comment
 export const getOne = async (req: Request, res: Response) => {
     let comment: Comment;
     comment = await db.A_comments.findOne({ where: { id: req.params.id } });
@@ -21,7 +20,6 @@ export const getOne = async (req: Request, res: Response) => {
     }
 };
 
-// Edit an Answer comment
 export const update = async (req: Request, res: Response) => {
     let comment: Comment;
     comment = await db.A_comments.findOne({ where: { id: req.params.id } });
