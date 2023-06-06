@@ -4,7 +4,7 @@ import db from "../models";
 
 export const getOne = async (req: Request, res: Response) => {
     let comment: Comment;
-    comment = await db.Q_comments.findOne({ where: { id: req.params.id } });
+    comment = await db.Question_comments.findOne({ where: { id: req.params.id } });
 
     if (comment === null) {
         res.status(404);
@@ -22,7 +22,7 @@ export const getOne = async (req: Request, res: Response) => {
 
 export const update = async (req: Request, res: Response) => {
     let comment: Comment;
-    comment = await db.Q_comments.findOne({ where: { id: req.params.id } });
+    comment = await db.Question_comments.findOne({ where: { id: req.params.id } });
 
     if (comment === null) {
         res.status(404);
@@ -34,7 +34,7 @@ export const update = async (req: Request, res: Response) => {
     }
     else {
         const title: string = req.body.title || comment.comment;
-        comment = await db.Q_comments.update({ comment: title }, {
+        comment = await db.Question_comments.update({ comment: title }, {
             where: {
                 id: req.params.id
             }
@@ -46,7 +46,7 @@ export const update = async (req: Request, res: Response) => {
 export const destroy = async (req: Request, res: Response) => {
 
     let comment: Comment;
-    comment = await db.Q_comments.findOne({ where: { id: req.params.id } });
+    comment = await db.Question_comments.findOne({ where: { id: req.params.id } });
 
     if (comment === null) {
         res.status(404);
@@ -57,7 +57,7 @@ export const destroy = async (req: Request, res: Response) => {
         throw new Error("Access Denied");
     }
     else {
-        await db.Q_comments.destroy({ where: { id: req.params.id } });
+        await db.Question_comments.destroy({ where: { id: req.params.id } });
         return res.status(200).send("Comment deleted");
     }
 };

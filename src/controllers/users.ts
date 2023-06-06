@@ -6,11 +6,11 @@ import {settings} from "../config/app";
 import db from "../models";
 
 export const register = async (req: Request, res: Response) => {
-    const displayName: string = req.body.displayName;
+    const display_name: string = req.body.displayName;
     const email: string = req.body.email;
     const password: string = req.body.password;
 
-    if (!displayName || !email || !password) {
+    if (!display_name || !email || !password) {
         res.status(400);
         throw new Error("All Fields are Mandatory");
     }
@@ -25,7 +25,7 @@ export const register = async (req: Request, res: Response) => {
     else {
         const hashedPassword = await bcrypt.hash(password, 10);
         user = await db.User.create({
-            displayName,
+            display_name,
             email,
             password: hashedPassword
         });
@@ -123,13 +123,15 @@ export const update = async (req: Request, res: Response) => {
         const location: UserAttributes["location"] = req.body.location || user.location;
         const title: UserAttributes["title"] = req.body.title || user.title;
         const aboutMe: UserAttributes["about_me"] = req.body.aboutMe || user.about_me;
-
-        user = await db.User.update({ displayName, email, location, title, aboutMe }, {
+        
+        let result: [] = await db.User.update({ display_name: displayName, email, location, title, about_me:aboutMe }, {
             where: { id: req.params.id },
-            attributes: { exclude: ['password', 'updatedAt'] },
-            returning: true
+            returning: true,
+            attributes: ['id', 'display_name', 'email', 'location', 'title', 'about_me'],
         });
-        return res.send(`User: ${user}`);
+        console.log(result);
+        
+        return res.send(`Status: Updated`);
     }
 };
 

@@ -75,7 +75,7 @@ export const destroy = async (req: Request, res: Response) => {
         // Not sure what "type" should be here
         // Gets the question related to a particular answer and decreases the answer count in Questions whenever a user deletes an answer
         let question: any = await answer.getQuestion();
-        await question.decrement('answers');
+        await question.decrement('answer_count');
 
         await db.Answer.destroy({ where: { id: req.params.id } });
         return res.status(200).send("Answer deleted");
@@ -98,7 +98,7 @@ export const createComment = async (req: Request, res: Response) => {
             throw new Error("Title Field is Mandatory");
         }
 
-        comment = await db.A_comments.create({
+        comment = await db.Answer_comments.create({
             comment: title,
             UserId: req.currentUser.user.id,
             AnswerId: answer.id
@@ -120,7 +120,7 @@ export const createComment = async (req: Request, res: Response) => {
 // Get all the comments related to a particular answer
 export const getComments = async (req: Request, res: Response) => {
     let comments: Comment[];
-    comments = await db.A_comments.findAll({ where: { AnswerId: req.params.id } });
+    comments = await db.Answer_comments.findAll({ where: { AnswerId: req.params.id } });
     console.log(comments);
 
     if (comments.length === 0) {

@@ -90,7 +90,7 @@ export const update = async (req: Request, res: Response) => {
                 id: req.params.id
             }, returning: ['title', 'description']
         });
-        return res.send(question);
+        return res.send("Status: Updated");
     }
 };
 
@@ -142,7 +142,7 @@ export const createAnswer = async (req: Request, res: Response) => {
             // If an answer was created increase the answer count in the question table by 1
             let answerCount: number;
             answerCount = question.answer_count + 1;
-            question = await db.Question.update({ answers: answerCount }, {
+            question = await db.Question.update({ answer_count: answerCount }, {
                 where: {
                     id: req.params.id
                 }
@@ -188,7 +188,7 @@ export const upVote = async (req: Request, res: Response) => {
                 id: req.params.id
             }, returning: ['votes']
         });
-        return res.status(200).send(`Vote Count: ${question}`);
+        return res.status(200).send("Status: Updated");
     }
 };
 
@@ -207,7 +207,7 @@ export const downVote = async (req: Request, res: Response) => {
                 id: req.params.id
             }, returning: ['votes']
         });
-        return res.status(200).send(`Vote Count: ${question}`);
+        return res.status(200).send("Status: Updated");
     }
 };
 
@@ -224,7 +224,7 @@ export const createComment = async (req: Request, res: Response) => {
 
         // A user can only have 1 comment per question
         let comment: Comment;
-        comment = await db.Q_comments.findOne({ where: { UserId: question.UserId } });
+        comment = await db.Question_comments.findOne({ where: { UserId: question.UserId } });
 
         if (comment === null) {
             const title: string = req.body.title;
@@ -233,7 +233,7 @@ export const createComment = async (req: Request, res: Response) => {
                 throw new Error("Title Field is Mandatory");
             }
 
-            comment = await db.Q_comments.create({
+            comment = await db.Question_comments.create({
                 comment: title,
                 UserId: req.currentUser.user.id,
                 QuestionId: question.id
@@ -260,7 +260,7 @@ export const createComment = async (req: Request, res: Response) => {
 // Get all the comments related to a particular question
 export const getComments = async (req: Request, res: Response) => {
     let comments: Comment[];
-    comments = await db.Q_comments.findAll({ where: { QuestionId: req.params.id } });
+    comments = await db.Question_comments.findAll({ where: { QuestionId: req.params.id } });
     console.log(comments);
 
     if (comments.length === 0) {
