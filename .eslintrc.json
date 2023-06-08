@@ -17,8 +17,54 @@
         "@typescript-eslint"
     ],
     "rules": {
-        "indent": ["warn", "tab"],
-        "quotes": ["error", "single"],
-        "semi": ["error", "always"]
-    }
+        "indent": [
+            "warn",
+            "tab"
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "comma-style": [
+            "error",
+            "last"
+        ], // requires a comma after and on the same line as an array element, object property, or variable declaration
+        "comma-dangle": [
+            "error",
+            "never"
+        ], // disallow trailing commas
+        "no-use-before-define": "off",
+        "arrow-return-shorthand": 0,
+        "max-len": [
+            "error",
+            {
+                "code": 150
+            }
+        ],
+        "@typescript-eslint/no-explicit-any": 0,
+        "@typescript-eslint/no-unused-vars": [
+            "warn",
+            {
+                "argsIgnorePattern": "^_"
+            }
+        ],
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "import/prefer-default-export": "off"
+    },
+    "overrides": [
+        {
+            "files": [
+                "*.ts"
+            ],
+            "rules": {
+                "@typescript-eslint/explicit-function-return-type": [
+                    "warn"
+                ]
+            }
+        }
+    ]
 }
