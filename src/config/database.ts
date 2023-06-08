@@ -34,3 +34,5 @@ export const setting = {
     "dialect": "mysql"
   }
 }
+
+module.exports = setting

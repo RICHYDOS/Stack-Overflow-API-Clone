@@ -1,5 +1,5 @@
 import express from "express";
-import {settings} from "./config/app";
+import { settings } from "./config/application";
 import db from "./models/index";
 import users from "./routes/users";
 import questions from "./routes/questions";

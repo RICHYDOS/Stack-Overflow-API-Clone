@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { Request, Response } from "express";
 import { UserAttributes } from "../models/users";
 import bcrypt from "bcrypt";
-import {settings} from "../config/app";
+import { settings } from "../config/application";
 import db from "../models";
 
 export const register = async (req: Request, res: Response) => {
@@ -90,11 +90,11 @@ export const getOne = async (req: Request, res: Response) => {
 
     user = await db.User.findOne({ where: { id: req.params.id }, attributes: { exclude: ['password', 'updatedAt'] } });
     if (user !== null) {
-        if (user.id === req.currentUser.user.id){
+        if (user.id === req.currentUser.user.id) {
             console.log(user);
             return res.send(user);
         }
-        else{
+        else {
             res.status(403);
             throw new Error("Access Denied");
         }
@@ -123,14 +123,14 @@ export const update = async (req: Request, res: Response) => {
         const location: UserAttributes["location"] = req.body.location || user.location;
         const title: UserAttributes["title"] = req.body.title || user.title;
         const aboutMe: UserAttributes["about_me"] = req.body.aboutMe || user.about_me;
-        
-        let result: [] = await db.User.update({ display_name: displayName, email, location, title, about_me:aboutMe }, {
+
+        let result: [] = await db.User.update({ display_name: displayName, email, location, title, about_me: aboutMe }, {
             where: { id: req.params.id },
             returning: true,
             attributes: ['id', 'display_name', 'email', 'location', 'title', 'about_me'],
         });
         console.log(result);
-        
+
         return res.send(`Status: Updated`);
     }
 };
