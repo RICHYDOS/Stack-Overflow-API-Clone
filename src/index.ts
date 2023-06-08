@@ -15,8 +15,6 @@ db.sequelize.sync({}).then(() => {
 	console.log('Connected to the Database');
 });
 
-console.log('Intentional Error to test if Husky is working');
-
 app.use(express.json());
 app.use('/api/users', users);
 app.use('/api/questions', questions);
