@@ -1,0 +1,9 @@
+// An Example of how your Error Logs might look
+// Rename this file to "error.log"
+
+{
+  "level": "error",
+  "message": "User Already Exists. Login Instead",
+  "stackTrace": "Error: User Already Exists. Login Instead\n    at C:\\Users\\RICHYDOS\\Documents\\Node Scripts\\Stack-Overflow-API-Clone\\dist\\controllers\\users.js:33:15\n    at Generator.next (<anonymous>)\n    at fulfilled (C:\\Users\\RICHYDOS\\Documents\\Node Scripts\\Stack-Overflow-API-Clone\\dist\\controllers\\users.js:5:58)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)",
+  "timestamp": "2023-06-09T20:29:18.109Z"
+}
