@@ -1,7 +1,7 @@
 import express from 'express';
 import { settings } from './config/application';
 import { sequelizeConnection } from './models/index';
-// import users from './routes/users';
+import users from './routes/users';
 // import questions from './routes/questions';
 // import answers from './routes/answers';
 // import qComments from './routes/question_comments';
@@ -17,7 +17,7 @@ sequelizeConnection.sync().then(() => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-// app.use('/api/users', users);
+app.use('/api/users', users);
 // app.use('/api/questions', questions);
 // app.use('/api/answers', answers);
 // app.use('/api/question-comments', qComments);

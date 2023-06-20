@@ -3,8 +3,8 @@ import { Request, Response, NextFunction } from 'express';
 import { settings } from '../config/application';
 
 export interface UserPayload {
-	user: {
-		username: string;
+	userDetails: {
+		display_name: string;
 		email: string;
 		id: number;
 	};

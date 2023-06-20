@@ -1,7 +1,7 @@
 'use strict';
 import { Model, Optional } from 'sequelize';
 
-interface UserAttributes {
+export interface UserAttributes {
 	id: number;
 	display_name: string;
 	email: string;
@@ -10,8 +10,8 @@ interface UserAttributes {
 	title?: string;
 	about_me?: string;
 }
-export type UserInput = Optional<UserAttributes, 'id'>
-export type UserOuput = Required<UserAttributes>
+export type UserInput = Optional<UserAttributes, 'id'>;
+export type UserOuput = Required<UserAttributes>;
 
 class User extends Model<UserAttributes, UserInput> implements UserAttributes {
 	id!: number;
