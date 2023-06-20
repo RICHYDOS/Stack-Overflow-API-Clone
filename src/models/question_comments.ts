@@ -1,46 +1,23 @@
 'use strict';
-import { Model } from 'sequelize';
+import { Model, Optional } from 'sequelize';
 
-export interface Question_commentAttributes {
-  id: number,
-  comment: string,
+export interface QuestionCommentAttributes {
+	id: number;
+	comment: string;
+}
+export type QuestionCommentInput = Optional<QuestionCommentAttributes, 'id'>
+export type QuestionCommentOuput = Required<QuestionCommentAttributes>
+
+class QuestionComment
+	extends Model<QuestionCommentAttributes, QuestionCommentInput>
+	implements QuestionCommentAttributes
+{
+	id!: number;
+	comment!: string;
+
+	// timestamps!
+	public readonly createdAt!: Date;
+	public readonly updatedAt!: Date;
 }
 
-module.exports = (sequelize: any, DataTypes: any) => {
-  class Question_comments extends Model<Question_commentAttributes> implements Question_commentAttributes {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-
-    id!: number;
-    comment!: string;
-
-    // Timestamps
-    readonly createdAt!: Date;
-    readonly updatedAt!: Date;
-
-    static associate(models: any) {
-      // define association here
-      Question_comments.belongsTo(models.User);
-      Question_comments.belongsTo(models.Question);
-    }
-  }
-  Question_comments.init({
-    id: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      primaryKey: true,
-      autoIncrement: true,
-    },
-    comment: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  }, {
-    sequelize,
-    modelName: 'Question_comments',
-  });
-  return Question_comments;
-};
+export default QuestionComment;
