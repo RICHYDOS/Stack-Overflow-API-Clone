@@ -5,6 +5,7 @@ import bcrypt from 'bcrypt';
 import { settings } from '../config/application';
 import { logger } from '../utils/logger';
 import db from '../models';
+import { requestWithUserData } from '../middleware/auth';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
 	const display_name: string = req.body.displayName;
@@ -73,86 +74,105 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 				{ expiresIn: '4h' }
 			);
 			logger.info('Login Successful');
-			res.status(200).send({ access_token: accessToken });
+			res.send({ Status: 'Logged in Successfully', Access_Token: accessToken });
 		}
-		res.send('something went wrong');
 	} else {
 		res.status(401);
 		throw new Error('Email or Password are invalid');
 	}
 };
 
-export const getOne = async (req: Request, res: Response) => {
-	const user: UserAttributes = await db.User.findOne({
-		where: { id: req.params.id },
-		attributes: { exclude: ['password', 'updatedAt'] }
-	});
-	if (user !== null) {
-		if (user.id === req.currentUser.user.id) {
-			console.log(user);
-			return res.send(user);
+export const getOne = async (req: requestWithUserData, res: Response) => {
+	if (!req.currentUser) {
+		res.status(403);
+		throw new Error('Access Denied');
+	} else {
+		const user: UserAttributes = await db.User.findOne({
+			where: { id: req.params.id },
+			attributes: { exclude: ['password', 'updatedAt'] }
+		});
+		if (user !== null) {
+			if (user.id === req.currentUser.user.id) {
+				return res.send(user);
+			} else {
+				res.status(403);
+				throw new Error('Access Denied');
+			}
 		} else {
+			return res.send('User does not exist... Sign up Please');
+		}
+	}
+};
+
+export const update = async (req: requestWithUserData, res: Response) => {
+	if (!req.currentUser) {
+		res.status(403);
+		throw new Error('Access Denied');
+	} else {
+		const user: UserAttributes = await db.User.findOne({
+			where: { id: req.params.id }
+		});
+
+		if (user === null) {
+			return res.send('User does not exist... Sign up Please');
+		} else if (user.id !== req.currentUser.user.id) {
 			res.status(403);
 			throw new Error('Access Denied');
+		} else {
+			const displayName: string = req.body.displayName || user.display_name;
+			const email: string = req.body.email || user.email;
+			const location: UserAttributes['location'] =
+				req.body.location || user.location;
+			const title: UserAttributes['title'] = req.body.title || user.title;
+			const aboutMe: UserAttributes['about_me'] =
+				req.body.aboutMe || user.about_me;
+
+			const result: [] = await db.User.update(
+				{
+					display_name: displayName,
+					email,
+					location,
+					title,
+					about_me: aboutMe
+				},
+				{
+					where: { id: req.params.id },
+					returning: true,
+					attributes: [
+						'id',
+						'display_name',
+						'email',
+						'location',
+						'title',
+						'about_me'
+					]
+				}
+			);
+			console.log(result);
+
+			return res.send('Status: Updated');
 		}
-	} else {
-		return res.send('User does not exist... Sign up Please');
 	}
 };
 
-export const update = async (req: Request, res: Response) => {
-	const user: UserAttributes = await db.User.findOne({
-		where: { id: req.params.id }
-	});
-
-	if (user === null) {
-		return res.send('User does not exist... Sign up Please');
-	} else if (user.id !== req.currentUser.user.id) {
+export const destroy = async (req: requestWithUserData, res: Response) => {
+	if (!req.currentUser) {
 		res.status(403);
 		throw new Error('Access Denied');
 	} else {
-		const displayName: string = req.body.displayName || user.display_name;
-		const email: string = req.body.email || user.email;
-		const location: UserAttributes['location'] =
-			req.body.location || user.location;
-		const title: UserAttributes['title'] = req.body.title || user.title;
-		const aboutMe: UserAttributes['about_me'] =
-			req.body.aboutMe || user.about_me;
-
-		const result: [] = await db.User.update(
-			{ display_name: displayName, email, location, title, about_me: aboutMe },
-			{
-				where: { id: req.params.id },
-				returning: true,
-				attributes: [
-					'id',
-					'display_name',
-					'email',
-					'location',
-					'title',
-					'about_me'
-				]
-			}
-		);
-		console.log(result);
-
-		return res.send('Status: Updated');
-	}
-};
-
-export const destroy = async (req: Request, res: Response) => {
-	const user: UserAttributes = await db.User.findOne({
-		where: { id: req.params.id }
-	});
-	if (user === null) {
-		return res.send('User does not exist... Sign up Please');
-	}
-	// A user cannot Delete another User's account
-	else if (user.id !== req.currentUser.user.id) {
-		res.status(403);
-		throw new Error('Access Denied');
-	} else {
-		await db.User.destroy({ where: { id: req.params.id } });
-		return res.status(200).send('User deleted');
+		const user: UserAttributes = await db.User.findOne({
+			where: { id: req.params.id }
+		});
+		if (user === null) {
+			return res.send('User does not exist... Sign up Please');
+		}
+		// A user cannot Delete another User's account
+		else if (user.id !== req.currentUser.user.id) {
+			res.status(403);
+			throw new Error('Access Denied');
+		} else {
+			await db.User.destroy({ where: { id: req.params.id } });
+			return res.status(200).send('User deleted');
+		}
 	}
 };
