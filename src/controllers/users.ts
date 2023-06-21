@@ -1,9 +1,10 @@
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { Request, Response } from 'express';
-import bcrypt from 'bcrypt';
+import { requestWithUserData } from '../middleware/auth';
 import { settings } from '../config/application';
 import { logger } from '../utils/logger';
-import { requestWithUserData } from '../middleware/auth';
+import { User } from '../models';
 import {
 	createUser,
 	findUser,
@@ -11,7 +12,6 @@ import {
 	updateUser,
 	deleteUser
 } from '../dal/users';
-import { User } from '../models';
 
 export const register = async (req: Request, res: Response): Promise<void> => {
 	const display_name: string = req.body.display_name;
@@ -138,6 +138,7 @@ export const update = async (
 				res.status(500);
 				throw new Error('Server Error');
 			}
+			logger.info('User Info Updated');
 			res.send('Status: Updated');
 		}
 	}
@@ -163,6 +164,7 @@ export const destroy = async (
 		} else {
 			await deleteUser({ id });
 			res.status(200).send('User deleted');
+			logger.info('User Deleted Successfully');
 		}
 	}
 };
