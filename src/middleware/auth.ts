@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 import { settings } from '../config/application';
+import { logger } from '../utils/logger';
 
 export interface UserPayload {
 	userDetails: {
@@ -33,7 +34,11 @@ export const auth = async (
 			req.currentUser = payload;
 			next();
 		} catch (error) {
-			console.log(error);
+			logger.error(error);
+			res.status(401).send({
+				Title: 'Error',
+				Message: `${error}`
+			});
 			next(error);
 		}
 	}
