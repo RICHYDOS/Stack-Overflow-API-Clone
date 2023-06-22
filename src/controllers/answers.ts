@@ -12,7 +12,7 @@ export const getOne = async (
 		res.status(403);
 		throw new Error('Access Denied');
 	}
-	const id = req.params.id;
+	const id: string = req.params.id;
 	const answer = await findAnswer({ id });
 
 	if (!answer) {
@@ -34,7 +34,7 @@ export const update = async (
 		res.status(403);
 		throw new Error('Access Denied');
 	}
-	const id = req.params.id;
+	const id: string = req.params.id;
 	const answer = await findAnswer({ id });
 
 	if (answer === null) {
@@ -62,7 +62,7 @@ export const destroy = async (
 		res.status(403);
 		throw new Error('Access Denied');
 	}
-	const id = req.params.id;
+	const id: string = req.params.id;
 	const answer = await findAnswer({ id });
 
 	if (answer === null) {
@@ -86,7 +86,7 @@ export const createComment = async (
 		res.status(403);
 		throw new Error('Access Denied');
 	}
-	const id = req.params.id;
+	const id: string = req.params.id;
 	const answer = await findAnswer({ id });
 
 	if (answer === null) {
@@ -121,7 +121,7 @@ export const getComments = async (
 	req: Request,
 	res: Response
 ): Promise<void> => {
-	const id = req.params.id;
+	const id: string = req.params.id;
 	const comments = await findAnswerComments(id);
 
 	if (comments.length === 0) {

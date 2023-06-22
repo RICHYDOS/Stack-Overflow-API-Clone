@@ -86,7 +86,7 @@ export const getOne = async (
 		res.status(403);
 		throw new Error('Access Denied');
 	} else {
-		const id = req.params.id;
+		const id: string = req.params.id;
 		const user = await findUser({ id });
 		if (user) {
 			if (user.id === req.currentUser.userDetails.id) {
@@ -109,7 +109,7 @@ export const update = async (
 		res.status(403);
 		throw new Error('Access Denied');
 	} else {
-		const id = req.params.id;
+		const id: string = req.params.id;
 		const user = await findUser({ id });
 
 		if (!user) {
@@ -152,7 +152,7 @@ export const destroy = async (
 		res.status(403);
 		throw new Error('Access Denied');
 	} else {
-		const id = req.params.id;
+		const id: string = req.params.id;
 		const user = await findUser({ id });
 		if (!user) {
 			res.send('User does not exist... Sign up Please');

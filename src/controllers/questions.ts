@@ -44,7 +44,7 @@ export const create = async (
 };
 
 export const getOne = async (req: Request, res: Response): Promise<void> => {
-	const id = req.params.id;
+	const id: string = req.params.id;
 	const question = await findQuestion({ id });
 
 	if (!question) {
@@ -63,7 +63,7 @@ export const update = async (
 		res.status(403);
 		throw new Error('Access Denied');
 	}
-	const id = req.params.id;
+	const id: string = req.params.id;
 	const question = await findQuestion({ id });
 
 	if (!question) {
@@ -94,7 +94,7 @@ export const destroy = async (
 		res.status(403);
 		throw new Error('Access Denied');
 	}
-	const id = req.params.id;
+	const id: string = req.params.id;
 	const question = await findQuestion({ id });
 
 	if (question === null) {
@@ -119,7 +119,7 @@ export const createAnswer = async (
 		res.status(403);
 		throw new Error('Access Denied');
 	}
-	const id = req.params.id;
+	const id: string = req.params.id;
 	const question = await findQuestion({ id });
 
 	if (!question) {
@@ -153,7 +153,7 @@ export const getAnswers = async (
 	req: Request,
 	res: Response
 ): Promise<void> => {
-	const QuestionId = req.params.id;
+	const QuestionId: string = req.params.id;
 
 	const answer = await findAnswers(QuestionId);
 
@@ -167,7 +167,7 @@ export const getAnswers = async (
 };
 
 export const upVote = async (req: Request, res: Response): Promise<void> => {
-	const id = req.params.id;
+	const id: string = req.params.id;
 	const question = await findQuestion({ id });
 
 	if (!question) {
@@ -182,7 +182,7 @@ export const upVote = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const downVote = async (req: Request, res: Response): Promise<void> => {
-	const id = req.params.id;
+	const id: string = req.params.id;
 	const question = await findQuestion({ id });
 
 	if (!question) {
@@ -205,7 +205,7 @@ export const createComment = async (
 		res.status(403);
 		throw new Error('Access Denied');
 	}
-	let id = req.params.id;
+	let id: string = req.params.id;
 	const question = await findQuestion({ id });
 
 	if (!question) {
@@ -248,7 +248,7 @@ export const getComments = async (
 	req: Request,
 	res: Response
 ): Promise<void> => {
-	const id = req.params.id;
+	const id: string = req.params.id;
 	const comments = await findQuestionComments(id);
 
 	if (comments.length === 0) {

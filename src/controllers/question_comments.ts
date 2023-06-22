@@ -37,7 +37,7 @@ export const update = async (
 		res.status(403);
 		throw new Error('Access Denied');
 	}
-	const id = req.params.id;
+	const id: string = req.params.id;
 	const comment = await findQuestionComment({ id });
 
 	if (comment === null) {
@@ -63,7 +63,7 @@ export const destroy = async (
 		res.status(403);
 		throw new Error('Access Denied');
 	}
-	const id = req.params.id;
+	const id: string = req.params.id;
 	const comment = await findQuestionComment({ id });
 
 	if (comment === null) {

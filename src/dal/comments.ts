@@ -59,7 +59,7 @@ export const findAnswerComment = async (query: {
 export const findAnswerComments = async (
 	query: string
 ): Promise<AnswerComment[]> => {
-	const comments = await AnswerComment.findAll({
+	const comments: AnswerComment[] = await AnswerComment.findAll({
 		where: { AnswerId: query }
 	});
 	return comments;
