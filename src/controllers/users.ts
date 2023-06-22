@@ -92,7 +92,7 @@ export const getOne = async (
 			if (user.id === req.currentUser.userDetails.id) {
 				res.send(user);
 			} else {
-				res.status(403);
+				res.status(403).send('Access Denied');
 				throw new Error('Access Denied');
 			}
 		} else {
@@ -118,14 +118,14 @@ export const update = async (
 			res.status(403);
 			throw new Error('Access Denied');
 		} else {
-			const display_name: string = req.body.display_name || user.display_name;
-			const email: string = req.body.email || user.email;
-			const location: string = req.body.location || user.location;
-			const title: string = req.body.title || user.title;
-			const aboutMe: string = req.body.aboutMe || user.about_me;
+			const display_name: string | undefined = req.body.display_name;
+			const email: string | undefined = req.body.email;
+			const location: string | undefined = req.body.location;
+			const title: string | undefined = req.body.title;
+			const aboutMe: string | undefined = req.body.aboutMe;
 
 			const result = {
-				display_name: display_name,
+				display_name,
 				email,
 				location,
 				title,

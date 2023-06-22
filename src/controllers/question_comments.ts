@@ -1,85 +1,80 @@
-// import { Response } from 'express';
-// import { Comment } from './questions';
-// import { requestWithUserData } from '../middleware/auth';
-// import db from '../models';
+import { Response } from 'express';
+import { requestWithUserData } from '../middleware/auth';
+import {
+	updateQuestionComment,
+	findQuestionComment,
+	deleteQuestionComment
+} from '../dal/comments';
+import { logger } from '../utils/logger';
 
-// export const getOne = async (
-// 	req: requestWithUserData,
-// 	res: Response
-// ): Promise<void> => {
-// 	if (!req.currentUser) {
-// 		res.status(403);
-// 		throw new Error('Access Denied');
-// 	}
-// 	const comment: Comment = await db.Question_comments.findOne({
-// 		where: { id: req.params.id }
-// 	});
+export const getOne = async (
+	req: requestWithUserData,
+	res: Response
+): Promise<void> => {
+	if (!req.currentUser) {
+		res.status(403);
+		throw new Error('Access Denied');
+	}
+	const id = req.params.id;
+	const comment = await findQuestionComment({ id });
 
-// 	if (comment === null) {
-// 		res.status(404);
-// 		throw new Error('Comment does not exist');
-// 	} else if (comment.UserId !== req.currentUser.user.id) {
-// 		res.status(403);
-// 		throw new Error('Access Denied');
-// 	} else {
-// 		console.log(comment);
-// 		res.status(200).send(comment);
-// 	}
-// };
+	if (comment === null) {
+		res.status(404);
+		throw new Error('Comment does not exist');
+	} else if (comment.UserId !== req.currentUser.userDetails.id) {
+		res.status(403);
+		throw new Error('Access Denied');
+	} else {
+		res.status(200).send(comment);
+	}
+};
 
-// export const update = async (
-// 	req: requestWithUserData,
-// 	res: Response
-// ): Promise<void> => {
-// 	if (!req.currentUser) {
-// 		res.status(403);
-// 		throw new Error('Access Denied');
-// 	}
-// 	let comment: Comment;
-// 	comment = await db.Question_comments.findOne({
-// 		where: { id: req.params.id }
-// 	});
+export const update = async (
+	req: requestWithUserData,
+	res: Response
+): Promise<void> => {
+	if (!req.currentUser) {
+		res.status(403);
+		throw new Error('Access Denied');
+	}
+	const id = req.params.id;
+	const comment = await findQuestionComment({ id });
 
-// 	if (comment === null) {
-// 		res.status(404);
-// 		throw new Error('Comment does not exist');
-// 	} else if (comment.UserId !== req.currentUser.user.id) {
-// 		res.status(403);
-// 		throw new Error('Access Denied');
-// 	} else {
-// 		const title: string = req.body.title || comment.comment;
-// 		comment = await db.Question_comments.update(
-// 			{ comment: title },
-// 			{
-// 				where: {
-// 					id: req.params.id
-// 				}
-// 			}
-// 		);
-// 		res.status(200).send('Comment Updated');
-// 	}
-// };
+	if (comment === null) {
+		res.status(404);
+		throw new Error('Comment does not exist');
+	} else if (comment.UserId !== req.currentUser.userDetails.id) {
+		res.status(403);
+		throw new Error('Access Denied');
+	} else {
+		const comment: string = req.body.comment;
+		const payload = { comment };
+		await updateQuestionComment(payload, { id });
+		res.status(200).send('Comment Updated');
+		logger.info('Comment Updated Successfully');
+	}
+};
 
-// export const destroy = async (
-// 	req: requestWithUserData,
-// 	res: Response
-// ): Promise<void> => {
-// 	if (!req.currentUser) {
-// 		res.status(403);
-// 		throw new Error('Access Denied');
-// 	}
-// 	const comment: Comment = await db.Question_comments.findOne({
-// 		where: { id: req.params.id }
-// 	});
+export const destroy = async (
+	req: requestWithUserData,
+	res: Response
+): Promise<void> => {
+	if (!req.currentUser) {
+		res.status(403);
+		throw new Error('Access Denied');
+	}
+	const id = req.params.id;
+	const comment = await findQuestionComment({ id });
 
-// 	if (comment === null) {
-// 		res.status(404);
-// 		throw new Error('Comment does not exist');
-// 	} else if (comment.UserId !== req.currentUser.user.id) {
-// 		res.status(403);
-// 		throw new Error('Access Denied');
-// 	} else {
-// 		await db.Question_comments.destroy({ where: { id: req.params.id } });
-// 		res.status(200).send('Comment deleted');
-// 	}
-// };
+	if (comment === null) {
+		res.status(404);
+		throw new Error('Comment does not exist');
+	} else if (comment.UserId !== req.currentUser.userDetails.id) {
+		res.status(403);
+		throw new Error('Access Denied');
+	} else {
+		await deleteQuestionComment({ id });
+		res.status(200).send('Comment deleted');
+		logger.info('Comment Deleted Successfully');
+	}
+};
