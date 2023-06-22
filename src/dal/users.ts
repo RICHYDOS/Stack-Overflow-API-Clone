@@ -1,5 +1,5 @@
 import { User } from '../models';
-import { UserInput } from '../models/users';
+import { UserInput, OptionalUserInput } from '../models/users';
 
 export const createUser = async (payload: UserInput): Promise<User> => {
 	const user: User = await User.create(payload);
@@ -25,16 +25,10 @@ export const userExists = async (email: string): Promise<boolean> => {
 };
 
 export const updateUser = async (
-	result: {
-		display_name: string;
-		email: string;
-		location: string;
-		title: string;
-		about_me: string;
-	},
+	payload: OptionalUserInput,
 	query: { email: string } | { id: string }
 ): Promise<void> => {
-	await User.update(result, { where: query });
+	await User.update(payload, { where: query });
 };
 
 export const deleteUser = async (
