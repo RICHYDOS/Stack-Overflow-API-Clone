@@ -1,5 +1,5 @@
 import express from 'express';
-import tryCatch from '../middleware/tryCatch';
+import { tryCatch } from '../middleware/tryCatch';
 import { auth } from '../middleware/auth';
 import { register, login, getOne, update, destroy } from '../controllers/users';
 
