@@ -90,6 +90,14 @@ Question.init(
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			defaultValue: 0
+		},
+		UserId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'Users',
+				key: 'id'
+			}
 		}
 	},
 	{
@@ -116,6 +124,22 @@ Answer.init(
 			type: DataTypes.INTEGER,
 			allowNull: false,
 			defaultValue: 0
+		},
+		UserId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'Users',
+				key: 'id'
+			}
+		},
+		QuestionId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'Questions',
+				key: 'id'
+			}
 		}
 	},
 	{
@@ -136,6 +160,22 @@ QuestionComment.init(
 		comment: {
 			type: DataTypes.STRING,
 			allowNull: false
+		},
+		UserId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'Users',
+				key: 'id'
+			}
+		},
+		QuestionId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'Questions',
+				key: 'id'
+			}
 		}
 	},
 	{
@@ -156,6 +196,22 @@ AnswerComment.init(
 		comment: {
 			type: DataTypes.STRING,
 			allowNull: false
+		},
+		UserId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'Users',
+				key: 'id'
+			}
+		},
+		AnswerId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'Answers',
+				key: 'id'
+			}
 		}
 	},
 	{

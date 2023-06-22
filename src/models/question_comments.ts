@@ -4,9 +4,14 @@ import { Model, Optional } from 'sequelize';
 export interface QuestionCommentAttributes {
 	id: number;
 	comment: string;
+	UserId: number;
+	QuestionId: number;
 }
-export type QuestionCommentInput = Optional<QuestionCommentAttributes, 'id'>
-export type QuestionCommentOuput = Required<QuestionCommentAttributes>
+export type QuestionCommentInput = Optional<
+	QuestionCommentAttributes,
+	'id' | 'UserId' | 'QuestionId'
+>;
+export type QuestionCommentOuput = Required<QuestionCommentAttributes>;
 
 class QuestionComment
 	extends Model<QuestionCommentAttributes, QuestionCommentInput>
@@ -14,6 +19,8 @@ class QuestionComment
 {
 	id!: number;
 	comment!: string;
+	UserId!: number;
+	QuestionId!: number;
 
 	// timestamps!
 	public readonly createdAt!: Date;
