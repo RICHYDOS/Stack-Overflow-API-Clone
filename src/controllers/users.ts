@@ -1,154 +1,170 @@
-import jwt from "jsonwebtoken";
-import { Request, Response } from "express";
-import { UserAttributes } from "../models/user";
-import bcrypt from "bcrypt";
-import db from "../models";
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { Request, Response } from 'express';
+import { requestWithUserData } from '../middleware/auth';
+import { settings } from '../config/application';
+import { logger } from '../utils/logger';
+import { User } from '../models';
+import {
+	createUser,
+	findUser,
+	userExists,
+	updateUser,
+	deleteUser
+} from '../dal/users';
 
-// Register a user
-export const register = async (req: Request, res: Response) => {
-    const displayName: string = req.body.displayName;
-    const email: string = req.body.email;
-    const password: string = req.body.password;
+export const register = async (req: Request, res: Response): Promise<void> => {
+	const display_name: string = req.body.display_name;
+	const email: string = req.body.email;
+	const password: string = req.body.password;
 
-    if (!displayName || !email || !password) {
-        res.status(400);
-        throw new Error("All Fields are Mandatory");
-    }
-
-    let user: UserAttributes;
-
-    // Check whether user is already in db
-    user = await db.User.findOne({ where: { email } });
-
-    if (user !== null) {
-        return res.send("User already Exists... Login Please");
-    }
-    else {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        user = await db.User.create({
-            displayName,
-            email,
-            password: hashedPassword
-        });
-
-        if (user) {
-            const result = { user_id: user.id, user_email: user.email };
-            return res.status(201).send(result);
-        }
-        else {
-            res.status(400);
-            throw new Error("Invalid Data");
-        }
-    }
+	if (!display_name || !email || !password) {
+		res.status(400);
+		throw new Error('All Fields are Mandatory');
+	}
+	if (await userExists(email)) {
+		res.status(400);
+		throw new Error('User Already Exists. Login Instead');
+	} else {
+		const hashedPassword = await bcrypt.hash(password, 10);
+		const result = { display_name, email, password: hashedPassword };
+		const user = await createUser(result);
+		if (user) {
+			logger.info('User Created Successfully');
+			res.status(201).send(user);
+		} else {
+			res.status(400);
+			throw new Error('Invalid Data');
+		}
+	}
 };
 
-// Log a user in
-export const login = async (req: Request, res: Response) => {
-    const email: string = req.body.email;
-    const password: string = req.body.password;
+export const login = async (req: Request, res: Response): Promise<void> => {
+	const email: string = req.body.email;
+	const password: string = req.body.password;
 
-    if (!email || !password) {
-        res.status(400);
-        throw new Error("All Fields are Mandatory");
-    }
+	if (!email || !password) {
+		res.status(400);
+		throw new Error('All Fields are Mandatory');
+	}
+	// I need the password in the query result this time
+	const user: User | null = await User.findOne({ where: { email } });
 
-    let user: UserAttributes;
-    user = await db.User.findOne({ where: { email } });
+	if (user) {
+		const hashedPassword: string = user.password;
 
-    if (user !== null) {
-        let hashedPassword: string = user.password;
-
-        // Compare client password with db password
-        if (user && (await bcrypt.compare(password, hashedPassword))) {
-            const accessToken = jwt.sign(
-                //Payload
-                {
-                    user: {
-                        username: user.displayName,
-                        email: user.email,
-                        id: user.id
-                    },
-                },
-                //Access Token Secret Key
-                process.env.ACCESSTOKENSECRET as string,
-                // Options like token expiry
-                { expiresIn: "4h" }
-            );
-
-            return res.status(200).send({ access_token: accessToken });
-        }
-        return res.send("something went wrong");
-
-    }
-
-    else {
-        res.status(401);
-        throw new Error("Email or Password are invalid");
-    }
+		// Compare client password with db password
+		if (await bcrypt.compare(password, hashedPassword)) {
+			const accessToken = jwt.sign(
+				//Payload
+				{
+					userDetails: {
+						display_name: user.display_name,
+						email: user.email,
+						id: user.id
+					}
+				},
+				//Access Token Secret Key
+				settings.secretKey,
+				// Options like token expiry
+				{ expiresIn: '4h' }
+			);
+			logger.info('Login Successful');
+			res.send({ Status: 'Logged in Successfully', Access_Token: accessToken });
+		}
+	} else {
+		res.status(401);
+		throw new Error('Email or Password are invalid');
+	}
 };
 
-// View User Profile
-export const getOne = async (req: Request, res: Response) => {
-    let user: UserAttributes;
-
-    // Get all the user's details except for the "password" and "updatedAt" properties
-    user = await db.User.findOne({ where: { id: req.params.id }, attributes: { exclude: ['password', 'updatedAt'] } });
-    if (user !== null) {
-        console.log(user);
-        return res.send(user);
-    }
-    else {
-        return res.send("User does not exist... Sign up Please");
-    }
+export const getOne = async (
+	req: requestWithUserData,
+	res: Response
+): Promise<void> => {
+	if (!req.currentUser) {
+		res.status(403);
+		throw new Error('Access Denied');
+	} else {
+		const id: string = req.params.id;
+		const user = await findUser({ id });
+		if (user) {
+			if (user.id === req.currentUser.userDetails.id) {
+				res.send(user);
+			} else {
+				res.status(403).send('Access Denied');
+				throw new Error('Access Denied');
+			}
+		} else {
+			res.send('User does not exist... Sign up Please');
+		}
+	}
 };
 
-// Edit user profile
-export const update = async (req: Request, res: Response) => {
+export const update = async (
+	req: requestWithUserData,
+	res: Response
+): Promise<void> => {
+	if (!req.currentUser) {
+		res.status(403);
+		throw new Error('Access Denied');
+	} else {
+		const id: string = req.params.id;
+		const user = await findUser({ id });
 
-    let user: UserAttributes;
+		if (!user) {
+			res.send('User does not exist... Sign up Please');
+		} else if (user.id !== req.currentUser.userDetails.id) {
+			res.status(403);
+			throw new Error('Access Denied');
+		} else {
+			const display_name: string | undefined = req.body.display_name;
+			const email: string | undefined = req.body.email;
+			const location: string | undefined = req.body.location;
+			const title: string | undefined = req.body.title;
+			const aboutMe: string | undefined = req.body.aboutMe;
 
-    user = await db.User.findOne({ where: { id: req.params.id } });
-
-    if (user === null) {
-        return res.send("User does not exist... Sign up Please");
-    }
-    // A user cannot edit another User's details
-    else if (user.id !== req.currentUser.user.id) {
-        res.status(400);
-        throw new Error("Access Denied");
-    }
-    else {
-        const displayName: string = req.body.displayName || user.displayName;
-        const email: string = req.body.email || user.email;
-        const location: UserAttributes["location"] = req.body.location || user.location;
-        const title: UserAttributes["title"] = req.body.title || user.title;
-        const aboutMe: UserAttributes["aboutMe"] = req.body.aboutMe || user.aboutMe;
-
-        // Update the necessary fields but leave out the password and updatedAt properties in the returned document
-        user = await db.User.update({ displayName, email, location, title, aboutMe }, {
-            where: { id: req.params.id },
-            attributes: { exclude: ['password', 'updatedAt'] },
-            returning: true
-        });
-        return res.send(`User: ${user}`);
-    }
+			const result = {
+				display_name,
+				email,
+				location,
+				title,
+				about_me: aboutMe
+			};
+			const id = req.params.id;
+			try {
+				await updateUser(result, { id });
+			} catch (error) {
+				res.status(500);
+				throw new Error('Server Error');
+			}
+			logger.info('User Info Updated');
+			res.send('Status: Updated');
+		}
+	}
 };
 
-// Delete User Profile
-export const destroy = async (req: Request, res: Response) => {
-
-    let user: UserAttributes;
-    user = await db.User.findOne({ where: { id: req.params.id } });
-    if (user === null) {
-        return res.send("User does not exist... Sign up Please");
-    }
-    // A user cannot Delete another User's account
-    else if (user.id !== req.currentUser.user.id) {
-        res.status(400);
-        throw new Error("Access Denied");
-    }
-    else {
-        await db.User.destroy({ where: { id: req.params.id } });
-        return res.status(200).send("User deleted");
-    }
+export const destroy = async (
+	req: requestWithUserData,
+	res: Response
+): Promise<void> => {
+	if (!req.currentUser) {
+		res.status(403);
+		throw new Error('Access Denied');
+	} else {
+		const id: string = req.params.id;
+		const user = await findUser({ id });
+		if (!user) {
+			res.send('User does not exist... Sign up Please');
+		}
+		// A user cannot Delete another User's account
+		else if (user.id !== req.currentUser.userDetails.id) {
+			res.status(403);
+			throw new Error('Access Denied');
+		} else {
+			await deleteUser({ id });
+			res.status(200).send('User deleted');
+			logger.info('User Deleted Successfully');
+		}
+	}
 };

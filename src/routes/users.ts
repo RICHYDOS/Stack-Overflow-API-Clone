@@ -1,16 +1,14 @@
-import express from "express";
-import dotenv from "dotenv";
-import tryCatch from "../middleware/tryCatch";
-import { register, login, getOne, update, destroy } from "../controllers/users";
+import express from 'express';
+import { tryCatch } from '../middleware/tryCatch';
+import { auth } from '../middleware/auth';
+import { register, login, getOne, update, destroy } from '../controllers/users';
 
-
-dotenv.config();
 const router = express.Router();
 
-router.post("/register", tryCatch(register));
-router.post("/login", tryCatch(login));
-router.get("/:id", tryCatch(getOne));
-router.put("/update/:id", tryCatch(update));
-router.delete("/delete/:id", tryCatch(destroy));
+router.post('/register', tryCatch(register));
+router.post('/login', tryCatch(login));
+router.get('/:id', auth, tryCatch(getOne));
+router.put('/:id', auth, tryCatch(update));
+router.delete('/:id', auth, tryCatch(destroy));
 
 export default router;

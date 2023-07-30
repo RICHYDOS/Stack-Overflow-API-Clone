@@ -1,43 +1,233 @@
-'use strict';
+import User from './users';
+import Question from './questions';
+import Answer from './answers';
+import QuestionComment from './question_comments';
+import AnswerComment from './answer_comments';
+import { Sequelize, DataTypes, Dialect } from 'sequelize';
+import { setting } from '../config/database';
+const env = 'development';
+const config = setting[env];
+import { defineAssociations } from './associations';
 
-const fs = require('fs');
-const path = require('path');
-const Sequelize = require('sequelize');
-const basename = path.basename(__filename);
-// const env = process.env.NODE_ENV || 'development';
-const setting = require("../config/config");
-let db: any = {};
-const config = setting.setting.development;
+const sequelizeConnection = new Sequelize(
+	config.database as string,
+	config.username,
+	config.password,
+	{ dialect: config.dialect as Dialect }
+);
 
+User.init(
+	{
+		id: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			primaryKey: true,
+			autoIncrement: true
+		},
+		display_name: {
+			type: DataTypes.STRING,
+			allowNull: false
+		},
+		email: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			unique: true
+		},
+		password: {
+			type: DataTypes.CHAR(60),
+			allowNull: false
+		},
+		location: {
+			type: DataTypes.STRING,
+			allowNull: true
+		},
+		title: {
+			type: DataTypes.STRING,
+			allowNull: true
+		},
+		about_me: {
+			type: DataTypes.STRING,
+			allowNull: true
+		}
+	},
+	{
+		timestamps: true,
+		sequelize: sequelizeConnection,
+		modelName: 'User'
+	}
+);
 
-let sequelize: any;
+Question.init(
+	{
+		id: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			primaryKey: true,
+			autoIncrement: true
+		},
+		title: {
+			type: DataTypes.STRING,
+			allowNull: false
+		},
+		description: {
+			type: DataTypes.STRING,
+			allowNull: false
+		},
+		expectation: {
+			type: DataTypes.STRING,
+			allowNull: true
+		},
+		tags: {
+			type: DataTypes.STRING,
+			allowNull: true
+		},
+		votes: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		answer_count: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		UserId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'Users',
+				key: 'id'
+			}
+		}
+	},
+	{
+		timestamps: true,
+		sequelize: sequelizeConnection,
+		modelName: 'Question'
+	}
+);
 
-sequelize = new Sequelize(config.database as string, config.username as string, config.password, config);
+Answer.init(
+	{
+		id: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			primaryKey: true,
+			autoIncrement: true
+		},
+		answer: {
+			type: DataTypes.STRING,
+			allowNull: false,
+			defaultValue: 0
+		},
+		votes: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0
+		},
+		UserId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'Users',
+				key: 'id'
+			}
+		},
+		QuestionId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'Questions',
+				key: 'id'
+			}
+		}
+	},
+	{
+		timestamps: true,
+		sequelize: sequelizeConnection,
+		modelName: 'Answer'
+	}
+);
 
+QuestionComment.init(
+	{
+		id: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			primaryKey: true,
+			autoIncrement: true
+		},
+		comment: {
+			type: DataTypes.STRING,
+			allowNull: false
+		},
+		UserId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'Users',
+				key: 'id'
+			}
+		},
+		QuestionId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'Questions',
+				key: 'id'
+			}
+		}
+	},
+	{
+		timestamps: true,
+		sequelize: sequelizeConnection,
+		modelName: 'Question_comments'
+	}
+);
 
-fs
-  .readdirSync(__dirname)
-  .filter((file:string) => {
-    return (
-      file.indexOf('.') !== 0 &&
-      file !== basename &&
-      file.slice(-3) === '.js' &&
-      file.indexOf('.test.js') === -1
-    );
-  })
-  .forEach((file:any) => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes);
-    db[model.name] = model;
-  });
+AnswerComment.init(
+	{
+		id: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			primaryKey: true,
+			autoIncrement: true
+		},
+		comment: {
+			type: DataTypes.STRING,
+			allowNull: false
+		},
+		UserId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'Users',
+				key: 'id'
+			}
+		},
+		AnswerId: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			references: {
+				model: 'Answers',
+				key: 'id'
+			}
+		}
+	},
+	{
+		timestamps: true,
+		sequelize: sequelizeConnection,
+		modelName: 'Answer_comments'
+	}
+);
 
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
+defineAssociations();
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-
-export default db;
-
+export {
+	User,
+	Question,
+	Answer,
+	QuestionComment,
+	AnswerComment,
+	sequelizeConnection
+};

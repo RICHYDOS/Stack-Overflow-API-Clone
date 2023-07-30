@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "start": "tsc && nodemon dist/index.js"
+    "start": "tsc && nodemon dist/index.js",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -20,8 +21,13 @@
   },
   "homepage": "https://github.com/RICHYDOS/Stack-Overflow-API-Clone#readme",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.59.9",
+    "@typescript-eslint/parser": "^5.59.9",
+    "eslint": "^8.42.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.2.2",
     "nodemon": "^2.0.22",
-    "sequelize-cli": "^6.6.0",
+    "sequelize-cli": "^6.6.1",
     "typescript": "^5.0.4"
   },
   "dependencies": {
@@ -33,9 +39,19 @@
     "@types/sequelize": "^4.28.14",
     "bcrypt": "^5.1.0",
     "dotenv": "^16.0.3",
+    "eslint-config-prettier": "^8.8.0",
     "express": "^4.18.2",
+    "husky": "^4.2.5",
     "jsonwebtoken": "^9.0.0",
-    "mysql2": "^3.2.4",
-    "sequelize": "^6.31.0"
+    "mysql2": "^3.3.3",
+    "prettier": "^2.8.8",
+    "sequelize": "^6.31.0",
+    "winston": "^3.9.0"
+  },
+  "lint-staged": {
+    "**/*.{js,jsx,ts,tsx}": [
+      "npx prettier --write",
+      "npx eslint --fix"
+    ]
   }
 }
